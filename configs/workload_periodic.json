@@ -1,0 +1,15 @@
+{
+  "num_streams": 2,
+  "buffer_capacity": 10,
+  "num_requests": 200,
+  "consumer_processing_ms": 8,
+  "workload": {
+    "type": "PERIODIC",
+    "base_interval_ms": 12,
+    "period_length": 40,
+    "amplitude_pct": 50.0,
+    "min_payload_bytes": 1024,
+    "max_payload_bytes": 4096,
+    "seed": 202
+  }
+}

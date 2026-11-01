@@ -1,0 +1,191 @@
+{
+  "plan_id": "4890d1fd4593a90ac491b004d33d03ccecbe285e6079b0169edf92004c4da775",
+  "run_id": "868fbf0a26e03d44c3c51bf83bf7bbf4339b46cd199dcb9cf8dbe15757586c0e",
+  "attempt": 1,
+  "record_sha256": "1a708f0a769e037b2f01c68482237b6a15d31ec18eafa280c978f05675b829da",
+  "record": {
+    "type": "experiment_result",
+    "schema_version": 1,
+    "strategy": "fixed_equal",
+    "workload": "phase9_backpressure",
+    "seed": 101,
+    "repetition": 1,
+    "stream_count": 2,
+    "global_buffer_budget": 16,
+    "input_fingerprint": "fb93b65b2b0ca0d5",
+    "workload_equivalent": true,
+    "success": true,
+    "error": "",
+    "initial_allocations": [
+      {
+        "stream_id": 0,
+        "capacity": 8
+      },
+      {
+        "stream_id": 1,
+        "capacity": 8
+      }
+    ],
+    "final_allocations": [
+      {
+        "stream_id": 0,
+        "capacity": 8
+      },
+      {
+        "stream_id": 1,
+        "capacity": 8
+      }
+    ],
+    "actual_final_capacities": [
+      {
+        "stream_id": 0,
+        "capacity": 8
+      },
+      {
+        "stream_id": 1,
+        "capacity": 8
+      }
+    ],
+    "build": {
+      "compiler": "15.2.0",
+      "cplusplus": 201703,
+      "optimized": true
+    },
+    "limits": [
+      {
+        "stream_id": 0,
+        "minimum": 1,
+        "maximum": 64
+      },
+      {
+        "stream_id": 1,
+        "minimum": 1,
+        "maximum": 64
+      }
+    ],
+    "metrics_config": {
+      "interval_ms": 20,
+      "window_ms": 100
+    },
+    "controller_config": {
+      "high_utilization_pct": 80,
+      "low_utilization_pct": 30,
+      "producer_pressure_ratio": 0.05,
+      "producer_idle_ratio": 0.01,
+      "consumer_idle_ratio": 0.05,
+      "confirmation_windows": 3,
+      "step_slots": 4,
+      "update_interval_ms": 100,
+      "cooldown_ms": 500
+    },
+    "configs": [
+      {
+        "stream_id": 0,
+        "name": "sustained-hot",
+        "buffer_capacity": 8,
+        "num_requests": 80,
+        "producer_interval_ms": 5,
+        "consumer_processing_ms": 5,
+        "min_payload_bytes": 512,
+        "max_payload_bytes": 4096,
+        "random_seed": 101,
+        "use_workload_config": true,
+        "workload": {
+          "type": "STEADY",
+          "base_interval_ms": 0,
+          "burst_interval_ms": 1,
+          "burst_length": 20,
+          "normal_length": 80,
+          "period_length": 40,
+          "amplitude_pct": 50,
+          "lambda": 0,
+          "min_payload_bytes": 64,
+          "max_payload_bytes": 1024,
+          "seed": 101,
+          "stream_id": 0,
+          "periodic_intervals_ms": [],
+          "phases": []
+        }
+      },
+      {
+        "stream_id": 1,
+        "name": "idle-donor",
+        "buffer_capacity": 8,
+        "num_requests": 0,
+        "producer_interval_ms": 5,
+        "consumer_processing_ms": 0,
+        "min_payload_bytes": 512,
+        "max_payload_bytes": 4096,
+        "random_seed": 201,
+        "use_workload_config": true,
+        "workload": {
+          "type": "STEADY",
+          "base_interval_ms": 8,
+          "burst_interval_ms": 1,
+          "burst_length": 20,
+          "normal_length": 80,
+          "period_length": 40,
+          "amplitude_pct": 50,
+          "lambda": 0,
+          "min_payload_bytes": 64,
+          "max_payload_bytes": 1024,
+          "seed": 201,
+          "stream_id": 1,
+          "periodic_intervals_ms": [],
+          "phases": []
+        }
+      }
+    ],
+    "request_count": 80,
+    "resize_successful": 0,
+    "resize_deferred": 0,
+    "resize_rejected": 0,
+    "measurements": {
+      "simulation_duration_sec": 1.2566363,
+      "throughput_req_per_sec": 63.66201581157571,
+      "throughput_mb_per_sec": 0.03546843494140866,
+      "avg_latency_ms": 148.20839749999993,
+      "p50_latency_upper_ms": 262.143,
+      "p95_latency_upper_ms": 262.143,
+      "producer_wait_ms": 1116.206,
+      "consumer_wait_ms": 1116.4292,
+      "average_utilization_pct": 47.17643251084572,
+      "peak_stream_utilization_pct": 100,
+      "peak_global_utilization_pct": null,
+      "total_produced": 80,
+      "total_consumed": 80,
+      "total_bytes": 46736
+    },
+    "process_exit_code": 0,
+    "stderr": "",
+    "run_id": "868fbf0a26e03d44c3c51bf83bf7bbf4339b46cd199dcb9cf8dbe15757586c0e",
+    "pair_id": "bed85b4a6715052a0dd14275c48ecac55c2bf3d6a9f02d397ddea761c67201c6",
+    "config_id": "157602da26368dc43269c6d4c93eb5fc1f9b17b7168a57757ff8edecfdc872ec",
+    "plan_id": "4890d1fd4593a90ac491b004d33d03ccecbe285e6079b0169edf92004c4da775",
+    "attempt": 1,
+    "execution_order": 1,
+    "command": [
+      "C:\\VIT - Projects And Material\\Semester 5\\OS\\CP\\Adaptive IO Simulator\\build_phase9\\experiment_runner.exe",
+      "--config",
+      "C:\\VIT - Projects And Material\\Semester 5\\OS\\CP\\Adaptive IO Simulator\\configs\\phase9_backpressure.json",
+      "--name",
+      "phase9_backpressure",
+      "--strategy",
+      "fixed_equal",
+      "--seed",
+      "101",
+      "--repetition",
+      "1",
+      "--min-capacity",
+      "1",
+      "--max-capacity",
+      "64",
+      "--metrics-interval-ms",
+      "20",
+      "--metrics-window-ms",
+      "100",
+      "--budget",
+      "16"
+    ]
+  }
+}

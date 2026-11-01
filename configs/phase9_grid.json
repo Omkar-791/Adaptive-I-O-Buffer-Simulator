@@ -1,0 +1,5 @@
+{
+  "budgets": [16, 24],
+  "metrics_interval_ms": [20],
+  "metrics_window_ms": [100]
+}

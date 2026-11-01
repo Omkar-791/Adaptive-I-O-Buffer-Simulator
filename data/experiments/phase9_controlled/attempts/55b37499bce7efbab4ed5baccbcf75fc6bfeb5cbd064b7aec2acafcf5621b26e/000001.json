@@ -1,0 +1,236 @@
+{
+  "plan_id": "4890d1fd4593a90ac491b004d33d03ccecbe285e6079b0169edf92004c4da775",
+  "run_id": "55b37499bce7efbab4ed5baccbcf75fc6bfeb5cbd064b7aec2acafcf5621b26e",
+  "attempt": 1,
+  "record_sha256": "de07bd46cb62ccd9e850b8005e9969e62fd72e21a7e283654ed040698b336bfe",
+  "record": {
+    "type": "experiment_result",
+    "schema_version": 1,
+    "strategy": "fixed_equal",
+    "workload": "phase9_heterogeneous",
+    "seed": 42,
+    "repetition": 1,
+    "stream_count": 3,
+    "global_buffer_budget": 24,
+    "input_fingerprint": "449067ec9c6d9afe",
+    "workload_equivalent": true,
+    "success": true,
+    "error": "",
+    "initial_allocations": [
+      {
+        "stream_id": 0,
+        "capacity": 8
+      },
+      {
+        "stream_id": 1,
+        "capacity": 8
+      },
+      {
+        "stream_id": 2,
+        "capacity": 8
+      }
+    ],
+    "final_allocations": [
+      {
+        "stream_id": 0,
+        "capacity": 8
+      },
+      {
+        "stream_id": 1,
+        "capacity": 8
+      },
+      {
+        "stream_id": 2,
+        "capacity": 8
+      }
+    ],
+    "actual_final_capacities": [
+      {
+        "stream_id": 0,
+        "capacity": 8
+      },
+      {
+        "stream_id": 1,
+        "capacity": 8
+      },
+      {
+        "stream_id": 2,
+        "capacity": 8
+      }
+    ],
+    "build": {
+      "compiler": "15.2.0",
+      "cplusplus": 201703,
+      "optimized": true
+    },
+    "limits": [
+      {
+        "stream_id": 0,
+        "minimum": 1,
+        "maximum": 64
+      },
+      {
+        "stream_id": 1,
+        "minimum": 1,
+        "maximum": 64
+      },
+      {
+        "stream_id": 2,
+        "minimum": 1,
+        "maximum": 64
+      }
+    ],
+    "metrics_config": {
+      "interval_ms": 20,
+      "window_ms": 100
+    },
+    "controller_config": {
+      "high_utilization_pct": 80,
+      "low_utilization_pct": 30,
+      "producer_pressure_ratio": 0.05,
+      "producer_idle_ratio": 0.01,
+      "consumer_idle_ratio": 0.05,
+      "confirmation_windows": 3,
+      "step_slots": 4,
+      "update_interval_ms": 100,
+      "cooldown_ms": 500
+    },
+    "configs": [
+      {
+        "stream_id": 0,
+        "name": "bursty-device",
+        "buffer_capacity": 8,
+        "num_requests": 80,
+        "producer_interval_ms": 5,
+        "consumer_processing_ms": 3,
+        "min_payload_bytes": 512,
+        "max_payload_bytes": 4096,
+        "random_seed": 42,
+        "use_workload_config": true,
+        "workload": {
+          "type": "BURST",
+          "base_interval_ms": 8,
+          "burst_interval_ms": 0,
+          "burst_length": 20,
+          "normal_length": 20,
+          "period_length": 40,
+          "amplitude_pct": 50,
+          "lambda": 0,
+          "min_payload_bytes": 64,
+          "max_payload_bytes": 1024,
+          "seed": 42,
+          "stream_id": 0,
+          "periodic_intervals_ms": [],
+          "phases": []
+        }
+      },
+      {
+        "stream_id": 1,
+        "name": "periodic-arrival-limited",
+        "buffer_capacity": 8,
+        "num_requests": 80,
+        "producer_interval_ms": 5,
+        "consumer_processing_ms": 0,
+        "min_payload_bytes": 512,
+        "max_payload_bytes": 4096,
+        "random_seed": 142,
+        "use_workload_config": true,
+        "workload": {
+          "type": "PERIODIC",
+          "base_interval_ms": 10,
+          "burst_interval_ms": 1,
+          "burst_length": 20,
+          "normal_length": 80,
+          "period_length": 20,
+          "amplitude_pct": 50,
+          "lambda": 0,
+          "min_payload_bytes": 64,
+          "max_payload_bytes": 1024,
+          "seed": 142,
+          "stream_id": 1,
+          "periodic_intervals_ms": [],
+          "phases": []
+        }
+      },
+      {
+        "stream_id": 2,
+        "name": "stochastic-pressure",
+        "buffer_capacity": 8,
+        "num_requests": 80,
+        "producer_interval_ms": 5,
+        "consumer_processing_ms": 3,
+        "min_payload_bytes": 512,
+        "max_payload_bytes": 4096,
+        "random_seed": 242,
+        "use_workload_config": true,
+        "workload": {
+          "type": "STOCHASTIC",
+          "base_interval_ms": 2,
+          "burst_interval_ms": 1,
+          "burst_length": 20,
+          "normal_length": 80,
+          "period_length": 40,
+          "amplitude_pct": 50,
+          "lambda": 0.5,
+          "min_payload_bytes": 64,
+          "max_payload_bytes": 1024,
+          "seed": 242,
+          "stream_id": 2,
+          "periodic_intervals_ms": [],
+          "phases": []
+        }
+      }
+    ],
+    "request_count": 240,
+    "resize_successful": 0,
+    "resize_deferred": 0,
+    "resize_rejected": 0,
+    "measurements": {
+      "simulation_duration_sec": 1.2448163,
+      "throughput_req_per_sec": 192.79953194700292,
+      "throughput_mb_per_sec": 0.09984949667341227,
+      "avg_latency_ms": 79.31278416666665,
+      "p50_latency_upper_ms": 131.071,
+      "p95_latency_upper_ms": 262.143,
+      "producer_wait_ms": 702.616,
+      "consumer_wait_ms": 1229.2488,
+      "average_utilization_pct": 53.038607984492195,
+      "peak_stream_utilization_pct": 100,
+      "peak_global_utilization_pct": null,
+      "total_produced": 240,
+      "total_consumed": 240,
+      "total_bytes": 130332
+    },
+    "process_exit_code": 0,
+    "stderr": "",
+    "run_id": "55b37499bce7efbab4ed5baccbcf75fc6bfeb5cbd064b7aec2acafcf5621b26e",
+    "pair_id": "48bbfe868b3e6c6572d71cbca8ef009f52995e38b0fba06d2b54f5c7014838a4",
+    "config_id": "2665513bf754022ef32349bc32f160e974fea09c72086f33d0dd65d0d91d39d2",
+    "plan_id": "4890d1fd4593a90ac491b004d33d03ccecbe285e6079b0169edf92004c4da775",
+    "attempt": 1,
+    "execution_order": 1,
+    "command": [
+      "C:\\VIT - Projects And Material\\Semester 5\\OS\\CP\\Adaptive IO Simulator\\build_phase9\\experiment_runner.exe",
+      "--config",
+      "C:\\VIT - Projects And Material\\Semester 5\\OS\\CP\\Adaptive IO Simulator\\configs\\phase9_heterogeneous.json",
+      "--name",
+      "phase9_heterogeneous",
+      "--strategy",
+      "fixed_equal",
+      "--seed",
+      "42",
+      "--repetition",
+      "1",
+      "--min-capacity",
+      "1",
+      "--max-capacity",
+      "64",
+      "--metrics-interval-ms",
+      "20",
+      "--metrics-window-ms",
+      "100",
+      "--budget",
+      "24"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "adaptive-io-backend",
+  "version": "0.10.0",
+  "private": true,
+  "description": "Local development HTTP bridge to the Adaptive IO native simulator",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test --test-concurrency=1 \"test/*.test.js\"",
+    "test:real": "node --test test/native-integration.test.js"
+  },
+  "dependencies": {
+    "express": "5.3.0"
+  }
+}

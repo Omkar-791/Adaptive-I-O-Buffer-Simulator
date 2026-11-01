@@ -1,0 +1,53 @@
+{
+  "global_buffer_budget": 32,
+  "streams": [
+    {
+      "stream_id": 0,
+      "name": "Audio-Stream",
+      "buffer_capacity": 8,
+      "num_requests": 200,
+      "consumer_processing_ms": 10,
+      "workload": {
+        "type": "PERIODIC",
+        "base_interval_ms": 15,
+        "period_length": 30,
+        "amplitude_pct": 50.0,
+        "min_payload_bytes": 1024,
+        "max_payload_bytes": 2048,
+        "seed": 1001
+      }
+    },
+    {
+      "stream_id": 1,
+      "name": "Video-Stream",
+      "buffer_capacity": 16,
+      "num_requests": 200,
+      "consumer_processing_ms": 5,
+      "workload": {
+        "type": "BURST",
+        "base_interval_ms": 12,
+        "burst_interval_ms": 1,
+        "burst_length": 25,
+        "normal_length": 75,
+        "min_payload_bytes": 2048,
+        "max_payload_bytes": 8192,
+        "seed": 2002
+      }
+    },
+    {
+      "stream_id": 2,
+      "name": "Telemetry-Stream",
+      "buffer_capacity": 8,
+      "num_requests": 200,
+      "consumer_processing_ms": 12,
+      "workload": {
+        "type": "STOCHASTIC",
+        "lambda": 0.1,
+        "base_interval_ms": 10,
+        "min_payload_bytes": 256,
+        "max_payload_bytes": 512,
+        "seed": 3003
+      }
+    }
+  ]
+}

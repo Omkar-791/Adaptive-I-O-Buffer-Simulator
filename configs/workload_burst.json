@@ -1,0 +1,16 @@
+{
+  "num_streams": 2,
+  "buffer_capacity": 16,
+  "num_requests": 200,
+  "consumer_processing_ms": 10,
+  "workload": {
+    "type": "BURST",
+    "base_interval_ms": 15,
+    "burst_interval_ms": 1,
+    "burst_length": 20,
+    "normal_length": 80,
+    "min_payload_bytes": 512,
+    "max_payload_bytes": 4096,
+    "seed": 101
+  }
+}

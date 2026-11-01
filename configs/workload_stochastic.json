@@ -1,0 +1,14 @@
+{
+  "num_streams": 2,
+  "buffer_capacity": 12,
+  "num_requests": 200,
+  "consumer_processing_ms": 10,
+  "workload": {
+    "type": "STOCHASTIC",
+    "lambda": 0.1,
+    "base_interval_ms": 10,
+    "min_payload_bytes": 512,
+    "max_payload_bytes": 2048,
+    "seed": 303
+  }
+}

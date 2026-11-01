@@ -1,0 +1,6 @@
+# Experiment provenance hashes raw bytes. Preserve supplied native/workflow sources,
+# configurations and immutable historical artifacts across Git checkouts.
+engine/** -text
+configs/** -text
+scripts/** -text
+data/experiments/** -text

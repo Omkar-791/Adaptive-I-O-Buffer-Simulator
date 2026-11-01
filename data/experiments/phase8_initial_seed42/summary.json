@@ -1,0 +1,1398 @@
+{
+  "schema_version": 1,
+  "stddev_definition": "sample SD (n-1); null for fewer than 2 runs",
+  "groups": [
+    {
+      "workload": "workload_burst",
+      "strategy": "adaptive",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 3.299972233333333,
+          "median": 3.3229906,
+          "stddev": 0.04012681205258312,
+          "min": 3.2536381,
+          "max": 3.323288
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 121.22517511103756,
+          "median": 120.3734972948765,
+          "stddev": 1.4844880075026679,
+          "min": 120.36272510838664,
+          "max": 122.93930292984952
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.26555493382739165,
+          "median": 0.2636892549706216,
+          "stddev": 0.0032519079823052017,
+          "min": 0.2636656575019616,
+          "max": 0.26930988900959174
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 15.872926499999998,
+          "median": 15.940742750000002,
+          "stddev": 0.18387055573130903,
+          "min": 15.664779749999989,
+          "max": 16.013257000000003
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 21.844333333333335,
+          "median": 16.383,
+          "stddev": 9.45930681040283,
+          "min": 16.383,
+          "max": 32.767
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 264.60926666666666,
+          "median": 254.654,
+          "stddev": 18.088080667758337,
+          "min": 253.6857,
+          "max": 285.4881
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 0.015085260485723756,
+          "median": 0.01442963575774752,
+          "stddev": 0.0020908049983505888,
+          "min": 0.013400839587096086,
+          "max": 0.01742530611232766
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 6.25,
+          "median": 6.25,
+          "stddev": 0.0,
+          "min": 6.25,
+          "max": 6.25
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    {
+      "workload": "workload_burst",
+      "strategy": "fixed_equal",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 3.2825504333333333,
+          "median": 3.2742973,
+          "stddev": 0.0508115092971398,
+          "min": 3.2363707,
+          "max": 3.3369833
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 121.87586579550583,
+          "median": 122.1636166025608,
+          "stddev": 1.8798361824640413,
+          "min": 119.86874492299677,
+          "max": 123.59523586095993
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.26698033182329306,
+          "median": 0.26761067652237286,
+          "stddev": 0.004117954645834309,
+          "min": 0.2625835483169421,
+          "max": 0.2707467706305643
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 15.699487583333333,
+          "median": 15.697349250000004,
+          "stddev": 0.014275869663376748,
+          "min": 15.686401500000002,
+          "max": 15.714711999999995
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 291.82203333333337,
+          "median": 287.135,
+          "stddev": 111.71321769335682,
+          "min": 182.5261,
+          "max": 405.805
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 0.013226145773733041,
+          "median": 0.011863069204439169,
+          "stddev": 0.00260998535649273,
+          "min": 0.01157990823996704,
+          "max": 0.016235459876792913
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 6.25,
+          "median": 6.25,
+          "stddev": 0.0,
+          "min": 6.25,
+          "max": 6.25
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    {
+      "workload": "workload_heterogeneous",
+      "strategy": "adaptive",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 4.7130798,
+          "median": 4.7191778,
+          "stddev": 0.02326091711970972,
+          "min": 4.6873773,
+          "max": 4.7326843
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 127.3073630331858,
+          "median": 127.14079134717069,
+          "stddev": 0.6294545388969138,
+          "min": 126.77794713668098,
+          "max": 128.00335061570573
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.2886320822280651,
+          "median": 0.28825442981716526,
+          "stddev": 0.0014271034282782311,
+          "min": 0.28743178706106054,
+          "max": 0.2902100298059694
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 16.513291722222217,
+          "median": 16.52571166666666,
+          "stddev": 0.11834488553591693,
+          "min": 16.389226666666662,
+          "max": 16.62493683333333
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 32.767,
+          "median": 32.767,
+          "stddev": 0.0,
+          "min": 32.767,
+          "max": 32.767
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 4658.269966666667,
+          "median": 4645.7316,
+          "stddev": 96.23193648692377,
+          "min": 4568.9218,
+          "max": 4760.1565
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 0.33985308484631116,
+          "median": 0.33662514887734973,
+          "stddev": 0.005821340492031733,
+          "min": 0.3363608480601836,
+          "max": 0.34657325760140006
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 33.333333333333336,
+          "median": 33.333333333333336,
+          "stddev": 0.0,
+          "min": 33.333333333333336,
+          "max": 33.333333333333336
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 2,
+          "median": 2,
+          "stddev": 0.0,
+          "min": 2,
+          "max": 2
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    {
+      "workload": "workload_heterogeneous",
+      "strategy": "fixed_equal",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 4.6919937,
+          "median": 4.6775349,
+          "stddev": 0.028485716931121754,
+          "min": 4.6736371,
+          "max": 4.7248091
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 127.88054114605738,
+          "median": 128.27269337958333,
+          "stddev": 0.7737253221710068,
+          "min": 126.98925761889512,
+          "max": 128.3796724396937
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.2899315953769043,
+          "median": 0.2908206854736293,
+          "stddev": 0.0017541950873068222,
+          "min": 0.2879108715619482,
+          "max": 0.29106322909513543
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 16.55094877777778,
+          "median": 16.415984166666664,
+          "stddev": 0.30370715697052575,
+          "min": 16.338116166666676,
+          "max": 16.898746000000003
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 27.305666666666667,
+          "median": 32.767,
+          "stddev": 9.45930681040283,
+          "min": 16.383,
+          "max": 32.767
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 4581.127533333333,
+          "median": 4599.6158,
+          "stddev": 92.0099307708865,
+          "min": 4481.2773,
+          "max": 4662.4895
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 0.31237584553043846,
+          "median": 0.31117907394511546,
+          "stddev": 0.004678234460058214,
+          "min": 0.3084122491889067,
+          "max": 0.31753621345729327
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 23.333333333333332,
+          "median": 20,
+          "stddev": 5.773502691896257,
+          "min": 20,
+          "max": 30
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    {
+      "workload": "workload_periodic",
+      "strategy": "adaptive",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 4.1411933,
+          "median": 4.1165602,
+          "stddev": 0.04591294460291136,
+          "min": 4.1128539,
+          "max": 4.1941658
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 96.59838243466372,
+          "median": 97.16850490853989,
+          "stddev": 1.0642142237588421,
+          "min": 95.37057404836021,
+          "max": 97.25606834709104
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.23528499670579894,
+          "median": 0.23667364588404566,
+          "stddev": 0.0025921100728650663,
+          "min": 0.2322944197950296,
+          "max": 0.23688692443832157
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 15.700066999999999,
+          "median": 15.735834249999998,
+          "stddev": 0.10719502166116339,
+          "min": 15.57956125,
+          "max": 15.784805499999997
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 2014.3354,
+          "median": 2013.1964,
+          "stddev": 89.86851357600172,
+          "min": 1925.0418,
+          "max": 2104.768
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 0.020290895913112054,
+          "median": 0.019862461571703575,
+          "stddev": 0.0021729530020395673,
+          "min": 0.018364071804345208,
+          "max": 0.022646154363287378
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 16.666666666666668,
+          "median": 16.666666666666668,
+          "stddev": 0.0,
+          "min": 16.666666666666668,
+          "max": 16.666666666666668
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 1,
+          "median": 1,
+          "stddev": 0.0,
+          "min": 1,
+          "max": 1
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    {
+      "workload": "workload_periodic",
+      "strategy": "fixed_equal",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 4.1326589,
+          "median": 4.1242418,
+          "stddev": 0.015561701566024407,
+          "min": 4.1231186,
+          "max": 4.1506163
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 96.79089968689918,
+          "median": 96.98752386438642,
+          "stddev": 0.3636842179208819,
+          "min": 96.37123046040175,
+          "max": 97.01394473590938
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.23575391160806106,
+          "median": 0.23623282976161974,
+          "stddev": 0.0008858268415968769,
+          "min": 0.2347317218975785,
+          "max": 0.23629718316498494
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 15.804320666666664,
+          "median": 15.774411249999998,
+          "stddev": 0.2062252834063305,
+          "min": 15.614683249999995,
+          "max": 16.023867499999998
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 1955.0312666666666,
+          "median": 2002.7896,
+          "stddev": 90.51894498597149,
+          "min": 1850.6348,
+          "max": 2011.6694
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 0.0159936222305167,
+          "median": 0.015864334480827177,
+          "stddev": 0.00044891660715797315,
+          "min": 0.01562353673147767,
+          "max": 0.016492995479245248
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 10,
+          "median": 10,
+          "stddev": 0.0,
+          "min": 10,
+          "max": 10
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    {
+      "workload": "workload_steady",
+      "strategy": "adaptive",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 3.1363892,
+          "median": 3.1320702,
+          "stddev": 0.017771377933069835,
+          "min": 3.1211754,
+          "max": 3.155922
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 127.53791690046653,
+          "median": 127.71105832813072,
+          "stddev": 0.721259785232315,
+          "min": 126.74584479591067,
+          "max": 128.1568475773582
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.15532286925377775,
+          "median": 0.15553373065080436,
+          "stddev": 0.0008783908506759955,
+          "min": 0.15435823916630734,
+          "max": 0.15607663794422158
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 15.677996500000003,
+          "median": 15.655902500000007,
+          "stddev": 0.09097758737492738,
+          "min": 15.60010075,
+          "max": 15.777986250000001
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 10.290166666666666,
+          "median": 9.9214,
+          "stddev": 1.2368901096432665,
+          "min": 9.2796,
+          "max": 11.6695
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 0.020909210437948224,
+          "median": 0.021869296707563293,
+          "stddev": 0.0018026133906821938,
+          "min": 0.018829764038657583,
+          "max": 0.0220285705676238
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 12.5,
+          "median": 12.5,
+          "stddev": 0.0,
+          "min": 12.5,
+          "max": 12.5
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    {
+      "workload": "workload_steady",
+      "strategy": "fixed_equal",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 3.219274866666667,
+          "median": 3.1465835,
+          "stddev": 0.1277322860999649,
+          "min": 3.1444787,
+          "max": 3.3667624
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 124.37920049239789,
+          "median": 127.12200391313307,
+          "stddev": 4.824553323001132,
+          "min": 118.80850279188101,
+          "max": 127.20709477217956
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.15147600623779248,
+          "median": 0.15481634695733035,
+          "stddev": 0.0058756131761286716,
+          "min": 0.14469169635083573,
+          "max": 0.15491997540521135
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 16.07376466666667,
+          "median": 15.728597500000001,
+          "stddev": 0.6159562917192397,
+          "min": 15.707788250000004,
+          "max": 16.784908249999997
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 21.844333333333335,
+          "median": 16.383,
+          "stddev": 9.45930681040283,
+          "min": 16.383,
+          "max": 32.767
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 10.736266666666666,
+          "median": 11.3516,
+          "stddev": 2.1684972523232156,
+          "min": 8.3266,
+          "max": 12.5306
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 0.016899076480589182,
+          "median": 0.01694807078536111,
+          "stddev": 8.75425187226638e-05,
+          "min": 0.016798006740684938,
+          "max": 0.016951151915721496
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 12.5,
+          "median": 12.5,
+          "stddev": 0.0,
+          "min": 12.5,
+          "max": 12.5
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    {
+      "workload": "workload_stochastic",
+      "strategy": "adaptive",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 3.8670509666666666,
+          "median": 3.8850061,
+          "stddev": 0.048118123765618075,
+          "min": 3.812537,
+          "max": 3.9036098
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 103.44873798135917,
+          "median": 102.95994129841907,
+          "stddev": 1.295017230069946,
+          "min": 102.4692580697999,
+          "max": 104.91701457585854
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.1253686125537796,
+          "median": 0.12477624416768934,
+          "stddev": 0.0015694199517094453,
+          "min": 0.1241815894935407,
+          "max": 0.12714800400010873
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 19.088773916666668,
+          "median": 19.030001249999998,
+          "stddev": 0.35052510018590094,
+          "min": 18.77135025,
+          "max": 19.464970250000007
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 32.767,
+          "median": 32.767,
+          "stddev": 0.0,
+          "min": 32.767,
+          "max": 32.767
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 1367.0096666666666,
+          "median": 1363.9431,
+          "stddev": 19.833654828178705,
+          "min": 1348.8879,
+          "max": 1388.198
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 1.423856803885202,
+          "median": 1.5127119121997001,
+          "stddev": 0.17077349361180286,
+          "min": 1.2269754422478032,
+          "max": 1.5318830572081028
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 33.333333333333336,
+          "median": 37.5,
+          "stddev": 7.216878364870322,
+          "min": 25,
+          "max": 37.5
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 0.6666666666666666,
+          "median": 1,
+          "stddev": 0.5773502691896257,
+          "min": 0,
+          "max": 1
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0.3333333333333333,
+          "median": 0,
+          "stddev": 0.5773502691896257,
+          "min": 0,
+          "max": 1
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    },
+    {
+      "workload": "workload_stochastic",
+      "strategy": "fixed_equal",
+      "attempted": 3,
+      "successful": 3,
+      "failed": 0,
+      "metrics": {
+        "simulation_duration_sec": {
+          "count": 3,
+          "mean": 3.8558084,
+          "median": 3.8648046,
+          "stddev": 0.04660698973619725,
+          "min": 3.8053591,
+          "max": 3.8972615
+        },
+        "throughput_req_per_sec": {
+          "count": 3,
+          "mean": 103.74973478592295,
+          "median": 103.49811734337099,
+          "stddev": 1.2583824064543023,
+          "min": 102.63617157842758,
+          "max": 105.11491543597029
+        },
+        "throughput_mb_per_sec": {
+          "count": 3,
+          "mean": 0.12573338792472788,
+          "median": 0.12542845496679508,
+          "stddev": 0.0015250225322970175,
+          "min": 0.12438387050152075,
+          "max": 0.12738783830586778
+        },
+        "avg_latency_ms": {
+          "count": 3,
+          "mean": 19.55353866666667,
+          "median": 19.28741325,
+          "stddev": 0.6393388012190983,
+          "min": 19.09024825000001,
+          "max": 20.28295450000001
+        },
+        "p50_latency_upper_ms": {
+          "count": 3,
+          "mean": 16.383,
+          "median": 16.383,
+          "stddev": 0.0,
+          "min": 16.383,
+          "max": 16.383
+        },
+        "p95_latency_upper_ms": {
+          "count": 3,
+          "mean": 43.68966666666667,
+          "median": 32.767,
+          "stddev": 18.918613620805655,
+          "min": 32.767,
+          "max": 65.535
+        },
+        "producer_wait_ms": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "consumer_wait_ms": {
+          "count": 3,
+          "mean": 1365.4470666666666,
+          "median": 1356.4211,
+          "stddev": 19.00114788699181,
+          "min": 1352.6412,
+          "max": 1387.2789
+        },
+        "average_utilization_pct": {
+          "count": 3,
+          "mean": 1.611359560312203,
+          "median": 1.5307329287799023,
+          "stddev": 0.16865961186171702,
+          "min": 1.498145763198703,
+          "max": 1.8051999889580042
+        },
+        "peak_stream_utilization_pct": {
+          "count": 3,
+          "mean": 25,
+          "median": 25,
+          "stddev": 0.0,
+          "min": 25,
+          "max": 25
+        },
+        "resize_successful": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_deferred": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        },
+        "resize_rejected": {
+          "count": 3,
+          "mean": 0,
+          "median": 0,
+          "stddev": 0.0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "workload": "workload_burst",
+      "successful_pairs": 3,
+      "paired_differences": {
+        "throughput_req_per_sec": {
+          "absolute": {
+            "count": 3,
+            "mean": -0.6506906844682779,
+            "median": -1.790119307684293,
+            "stddev": 3.3024070217140236,
+            "min": -3.2325107525732903,
+            "max": 3.0705580068527496
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": -0.5063820926952322,
+            "median": -1.4653457039571376,
+            "stddev": 2.718463383070166,
+            "min": -2.6154007717657866,
+            "max": 2.561600197637228
+          }
+        },
+        "avg_latency_ms": {
+          "absolute": {
+            "count": 3,
+            "mean": 0.17343891666666403,
+            "median": 0.2543412499999995,
+            "stddev": 0.1797723384774474,
+            "min": -0.03256950000001524,
+            "max": 0.29854500000000783
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": 1.1045695163441656,
+            "median": 1.6214123424037021,
+            "stddev": 1.1447644512219488,
+            "min": -0.20748407569523392,
+            "max": 1.8997802823240282
+          }
+        }
+      },
+      "difference_of_means": {
+        "throughput_req_per_sec": {
+          "absolute": -0.6506906844682732,
+          "relative_pct": -0.5338962560151653
+        },
+        "avg_latency_ms": {
+          "absolute": 0.17343891666666522,
+          "relative_pct": 1.1047425321753113
+        }
+      }
+    },
+    {
+      "workload": "workload_heterogeneous",
+      "successful_pairs": 3,
+      "paired_differences": {
+        "throughput_req_per_sec": {
+          "absolute": {
+            "count": 3,
+            "mean": -0.573178112871588,
+            "median": -0.3763218239879791,
+            "stddev": 0.840609145043142,
+            "min": -1.4947462429023517,
+            "max": 0.15153372827556666
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": -0.44636396764645514,
+            "median": -0.2931319396883148,
+            "stddev": 0.6558731362441201,
+            "min": -1.165287952969938,
+            "max": 0.11932798971888744
+          }
+        },
+        "avg_latency_ms": {
+          "absolute": {
+            "count": 3,
+            "mean": -0.03765705555556428,
+            "median": 0.10972749999999465,
+            "stddev": 0.41812797599805457,
+            "min": -0.5095193333333405,
+            "max": 0.28682066666665307
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": -0.19706051354930634,
+            "median": 0.6684186515164949,
+            "stddev": 2.5003188346946454,
+            "min": -3.015131024120609,
+            "max": 1.7555308319561949
+          }
+        }
+      },
+      "difference_of_means": {
+        "throughput_req_per_sec": {
+          "absolute": -0.573178112871588,
+          "relative_pct": -0.44821370611572475
+        },
+        "avg_latency_ms": {
+          "absolute": -0.03765705555556309,
+          "relative_pct": -0.22752203551087985
+        }
+      }
+    },
+    {
+      "workload": "workload_periodic",
+      "successful_pairs": 3,
+      "paired_differences": {
+        "throughput_req_per_sec": {
+          "absolute": {
+            "count": 3,
+            "mean": -0.1925172522354662,
+            "median": 0.24212361118166825,
+            "stddev": 1.2644382980335434,
+            "min": -1.6169498160262066,
+            "max": 0.7972744481381397
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": -0.1967672779149683,
+            "median": 0.24957609119057605,
+            "stddev": 1.3057601460676298,
+            "min": -1.6671730049393978,
+            "max": 0.8272950800039168
+          }
+        },
+        "avg_latency_ms": {
+          "absolute": {
+            "count": 3,
+            "mean": -0.10425366666666551,
+            "median": -0.19484999999999886,
+            "stddev": 0.2421412547566942,
+            "min": -0.2880332499999998,
+            "max": 0.17012225000000214
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": -0.6477509974579918,
+            "median": -1.2352283512324358,
+            "stddev": 1.5305489712482452,
+            "min": -1.7975264086525917,
+            "max": 1.089501767511052
+          }
+        }
+      },
+      "difference_of_means": {
+        "throughput_req_per_sec": {
+          "absolute": -0.19251725223546146,
+          "relative_pct": -0.19890015782291462
+        },
+        "avg_latency_ms": {
+          "absolute": -0.10425366666666491,
+          "relative_pct": -0.659652944694733
+        }
+      }
+    },
+    {
+      "workload": "workload_steady",
+      "successful_pairs": 3,
+      "paired_differences": {
+        "throughput_req_per_sec": {
+          "absolute": {
+            "count": 3,
+            "mean": 3.1587164080686514,
+            "median": 0.5039635559511595,
+            "stddev": 5.378408553445376,
+            "min": -0.37615911722240014,
+            "max": 9.348344785477195
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": 2.6562285268015664,
+            "median": 0.39617566681616984,
+            "stddev": 4.527129453878836,
+            "min": -0.29590401790664256,
+            "max": 7.868413931495172
+          }
+        },
+        "avg_latency_ms": {
+          "absolute": {
+            "count": 3,
+            "mean": -0.3957681666666648,
+            "median": -0.05188574999999673,
+            "stddev": 0.6852017463841548,
+            "min": -1.184807499999998,
+            "max": 0.049388750000000314
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": -2.3583597250186896,
+            "median": -0.3303186239475613,
+            "stddev": 4.083400210407734,
+            "min": -7.0587666155398745,
+            "max": 0.3140060644313666
+          }
+        }
+      },
+      "difference_of_means": {
+        "throughput_req_per_sec": {
+          "absolute": 3.158716408068642,
+          "relative_pct": 2.539585714945727
+        },
+        "avg_latency_ms": {
+          "absolute": -0.3957681666666666,
+          "relative_pct": -2.462199583445437
+        }
+      }
+    },
+    {
+      "workload": "workload_stochastic",
+      "successful_pairs": 3,
+      "paired_differences": {
+        "throughput_req_per_sec": {
+          "absolute": {
+            "count": 3,
+            "mean": -0.30099680456378053,
+            "median": -0.19790086011174424,
+            "stddev": 0.682182438119283,
+            "min": -1.0288592735710864,
+            "max": 0.32376971999148907
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": -0.2889673856321363,
+            "median": -0.18827095973101324,
+            "stddev": 0.6605511442027909,
+            "min": -0.9940850133125484,
+            "max": 0.3154538161471526
+          }
+        },
+        "avg_latency_ms": {
+          "absolute": {
+            "count": 3,
+            "mean": -0.46476475000000406,
+            "median": -0.06024700000001104,
+            "stddev": 0.9143535364803903,
+            "min": -1.5116042500000084,
+            "max": 0.1775570000000073
+          },
+          "relative_pct": {
+            "count": 3,
+            "mean": -2.2825299198891478,
+            "median": -0.31559044812322445,
+            "stddev": 4.519859267710712,
+            "min": -7.452584139061239,
+            "max": 0.9205848275170196
+          }
+        }
+      },
+      "difference_of_means": {
+        "throughput_req_per_sec": {
+          "absolute": -0.30099680456378053,
+          "relative_pct": -0.29011814361246985
+        },
+        "avg_latency_ms": {
+          "absolute": -0.46476475000000406,
+          "relative_pct": -2.3768830692129312
+        }
+      }
+    }
+  ]
+}

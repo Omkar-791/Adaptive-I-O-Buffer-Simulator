@@ -1,0 +1,11 @@
+# Phase 10 native integration contract (verified before implementation)
+
+Invoke the trusted simulator with spawn(executable, ['--config', privateJsonPath, '--telemetry', '--metrics-interval-ms', interval, '--metrics-window-ms', window, ...adaptiveFlag], {shell:false,windowsHide:true,controlled cwd,whitelisted env}). Only --adaptive is appended for adaptive runs. There is no --strategy or graceful stop/input protocol. Cancel/timeout terminates the OS process, with no final result guarantee.
+
+Native stdout is NDJSON: initial/periodic/final metrics_snapshot, optional buffer_resize outcomes, then one simulation_completed. Success requires validated completion, final snapshot/count agreement, exit0 and child close. Public progress is null. Native stderr may contain local paths and is never returned raw to API clients.
+
+Request: {strategy:'fixed'|'adaptive',config:<supported native config>,metrics:{interval_ms,window_ms}}. fixed preserves configured initial capacities; it is not the Phase8 fixed_equal experiment policy. Both uniform and heterogeneous configs normalize to explicit heterogeneous streams so effective seeds are consistent. Native output names are not JSON-escaped, so API names are safe ASCII letters/digits/space/underscore/dot/dash only. Header-only periodic interval arrays and min/max/controller fields unsupported by the native JSON/CLI are not exposed. Effective accepted configuration is visible on run status.
+
+API paths: GET /api/v1/health; POST/GET /api/v1/runs; GET /api/v1/runs/:id; GET /telemetry; GET /result; POST /cancel. POST/create and status use direct summaries plus statusUrl; list uses {runs}; health includes backend status/native configured+available; errors use {error:{code,message}}. Results return native completion fields unchanged. No SSE/WebSocket/frontend is implemented.
+
+In-memory bounded history, admission concurrency limit, isolated server-owned temp folders, incremental bounded UTF8/NDJSON, separate final result retention and terminal states form the bridge. Cancellation is process termination, never claimed graceful. Only loopback is supported; no authentication/database is introduced. This local development service must not be exposed as a multi-user remote API.

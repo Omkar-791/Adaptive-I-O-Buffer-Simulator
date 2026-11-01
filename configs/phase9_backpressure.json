@@ -1,0 +1,33 @@
+{
+  "global_buffer_budget": 16,
+  "streams": [
+    {
+      "stream_id": 0,
+      "name": "sustained-hot",
+      "buffer_capacity": 8,
+      "num_requests": 80,
+      "consumer_processing_ms": 5,
+      "workload": {
+        "type": "STEADY",
+        "base_interval_ms": 0,
+        "min_payload_bytes": 64,
+        "max_payload_bytes": 1024,
+        "seed": 42
+      }
+    },
+    {
+      "stream_id": 1,
+      "name": "idle-donor",
+      "buffer_capacity": 8,
+      "num_requests": 0,
+      "consumer_processing_ms": 0,
+      "workload": {
+        "type": "STEADY",
+        "base_interval_ms": 8,
+        "min_payload_bytes": 64,
+        "max_payload_bytes": 1024,
+        "seed": 142
+      }
+    }
+  ]
+}

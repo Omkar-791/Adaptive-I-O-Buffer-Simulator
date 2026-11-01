@@ -1,0 +1,53 @@
+{
+  "global_buffer_budget": 24,
+  "streams": [
+    {
+      "stream_id": 0,
+      "name": "bursty-device",
+      "buffer_capacity": 8,
+      "num_requests": 80,
+      "consumer_processing_ms": 3,
+      "workload": {
+        "type": "BURST",
+        "base_interval_ms": 8,
+        "min_payload_bytes": 64,
+        "max_payload_bytes": 1024,
+        "seed": 42,
+        "burst_interval_ms": 0,
+        "normal_length": 20,
+        "burst_length": 20
+      }
+    },
+    {
+      "stream_id": 1,
+      "name": "periodic-arrival-limited",
+      "buffer_capacity": 8,
+      "num_requests": 80,
+      "consumer_processing_ms": 0,
+      "workload": {
+        "type": "PERIODIC",
+        "base_interval_ms": 10,
+        "min_payload_bytes": 64,
+        "max_payload_bytes": 1024,
+        "seed": 142,
+        "period_length": 20,
+        "amplitude_pct": 50
+      }
+    },
+    {
+      "stream_id": 2,
+      "name": "stochastic-pressure",
+      "buffer_capacity": 8,
+      "num_requests": 80,
+      "consumer_processing_ms": 3,
+      "workload": {
+        "type": "STOCHASTIC",
+        "base_interval_ms": 2,
+        "min_payload_bytes": 64,
+        "max_payload_bytes": 1024,
+        "seed": 242,
+        "lambda": 0.5
+      }
+    }
+  ]
+}

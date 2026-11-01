@@ -1,0 +1,63 @@
+# Build directories
+build/
+bin/
+out/
+.cache/
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Operating System files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Node / Web dependencies (for future phases)
+node_modules/
+dist/
+.vite/
+
+# Experiment artifacts
+data/runs/*
+!data/runs/.gitkeep
+
+# Phase 5 local verification build
+build_phase5/
+
+# Phase 6 local verification build
+build_phase6/
+
+# Phase 7 local verification build
+build_phase7/
+
+# Phase 8 local verification build
+build_phase8/
+
+# Phase 9 local validation builds
+build_phase9/
+
+# Python caches and transient workflow owner lock
+__pycache__/
+*.py[cod]
+.workflow.lock
+
+# Ephemeral backend native inputs
+server/.runs/
+
+# Phase 10 local validation build
+build_phase10/
+
+# Frontend verification artifacts
+client/test-results/
+client/playwright-report/
+build_phase11/
+build_phase13/
+build_audit/
+.env
+.env.*
+!.env.example
+*.log
+client/*.tsbuildinfo
