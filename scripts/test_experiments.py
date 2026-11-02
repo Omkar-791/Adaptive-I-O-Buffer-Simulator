@@ -105,12 +105,16 @@ class ExperimentStatisticsTests(unittest.TestCase):
                 if command and str(command[0]) == str(exe):
                     return process
                 return real_run(command, *args, **kwargs)
-            with mock.patch.object(runner.subprocess, 'run', side_effect=native_failure), contextlib.redirect_stdout(io.StringIO()):
+            with mock.patch.object(runner.platform, 'platform', return_value='test-platform'), \
+                 mock.patch.object(runner.subprocess, 'run', side_effect=native_failure), \
+                 contextlib.redirect_stdout(io.StringIO()):
                 status = runner.main(['--exe', str(exe), '--configs', str(config), '--strategies', 'fixed_equal',
                                       '--repetitions', '1', '--output', str(output)])
             self.assertEqual(status, 1)
             record = json.loads((output/'runs.jsonl').read_text())
             self.assertFalse(record['success'])
+            self.assertEqual(record['process_exit_code'], 2)
+            self.assertEqual(record['stderr'], 'fixture failure')
             self.assertIsNone(record['measurements'])
             summary = json.loads((output/'summary.json').read_text())
             self.assertEqual(summary['groups'][0]['failed'], 1)
