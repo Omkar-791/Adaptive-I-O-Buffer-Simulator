@@ -1,6 +1,6 @@
 # Adaptive I/O Buffer Management & Performance Optimization System
 
-C++17 Operating Systems course project modeling concurrent producer-consumer I/O streams under a shared buffer-slot budget. Current milestone: **Phase 14 Testing and Integration — verified**. The React workspace connects to the Phase10 bridge for real native simulations, cursor-polled telemetry and final results. Adaptive operation remains opt-in; WebSocket transport is future work.
+C++17 Operating Systems course project modeling concurrent producer-consumer I/O streams under a shared buffer-slot budget. Current milestone: **Phase 15 Final Evaluation, Report, and Viva Preparation — verified**. The React workspace connects to the Phase10 bridge for real native simulations, cursor-polled telemetry and final results. Adaptive operation remains opt-in; WebSocket transport is future work.
 
 ## Structure
 
@@ -110,7 +110,7 @@ Adaptive telemetry includes buffer_resize results with previous/requested/actual
 
 All nine C++ suites passed a fresh warning-free GCC build and execution: 38 original tests, six metrics groups, seven controller groups, nine resizing groups and four experiment groups. All 40 Python tests passed: nine existing statistics/driver tests, 25 workflow/recovery tests and six export/atomic-I/O tests. Some filesystem tests required approved access; bounded Windows sharing-error recovery was implemented and tested. All five example configurations were exercised with NDJSON validation. CMake/CTest were unavailable in that environment; the CMake targets were updated but not executed. ThreadSanitizer linking failed because this GCC installation lacks libtsan. No race-free or overhead claim is made.
 
-Legacy resource-manager resize hooks remain accounting-only and are blocked while an executor is bound. Use RuntimeResizeExecutor for physical changes. The next milestone is **Phase 15 Final Evaluation, Report, and Viva Preparation** (not started).
+Legacy resource-manager resize hooks remain accounting-only and are blocked while an executor is bound. Use RuntimeResizeExecutor for physical changes. Phase15 academic deliverables are complete; the checked-in roadmap ends at Phase15.
 
 ## Adaptive I/O Lab
 
@@ -138,4 +138,15 @@ History remains in memory. [Workflow contract](docs/PHASE13_API_CONTRACT.md),
 
 ## Phase14 testing and hardening
 
-Native stress and real-system orchestration are available under tests/. See [testing commands](docs/TESTING_PHASE14.md) and [actual acceptance status](docs/PHASE14_COMPLETION_REPORT.md). Phase14 verification passed: real integration/regression tests, fresh native builds, Linux/Windows/macOS CI, Linux ASan/TSan/Valgrind and the original3603.466s adaptive stress run with828000 completed requests and3107 applied resizes. Results cover the documented workloads; the hour test uses repeated Simulation batches. Phase15 has not started.
+Native stress and real-system orchestration are available under tests/. See [testing commands](docs/TESTING_PHASE14.md) and [actual acceptance status](docs/PHASE14_COMPLETION_REPORT.md). Phase14 verification passed: real integration/regression tests, fresh native builds, Linux/Windows/macOS CI, Linux ASan/TSan/Valgrind and the original3603.466s adaptive stress run with828000 completed requests and3107 applied resizes. Results cover the documented workloads; the hour test uses repeated Simulation batches. Phase15 deliverables are documented below.
+
+## Final academic and viva deliverables (Phase15)
+
+[Final report](docs/FINAL_REPORT.md), [15-slide presentation content](docs/VIVA_PRESENTATION.md),
+[live demo/viva guide](docs/VIVA_DEMO_GUIDE.md), [completion evidence](docs/PHASE15_COMPLETION_REPORT.md).
+Reproduce the three300DPI figures with `python scripts/plot_phase15.py` (matplotlib3.10.8
+verified); run `python scripts/test_phase15.py`. [Figure definitions/data/provenance](data/plots/README.md).
+For a bounded real-product rehearsal, use `python scripts/demo_phase15.py --native build_phase14/adaptive_io_sim.exe --output build_phase15/viva-dry-run-new`
+after building/configuring prerequisites in the demo guide. It preserves prior browser
+evidence and shuts down owned services. No Phase14 hour rerun or new benchmark matrix is needed.
+No later phase has been started.
