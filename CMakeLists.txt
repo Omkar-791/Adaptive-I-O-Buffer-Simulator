@@ -125,6 +125,8 @@ foreach(suite bounded_buffer simulation multi_stream resource_manager workload_g
         target_compile_options(test_${suite} PRIVATE -UNDEBUG)
     endif()
     add_test(NAME ${suite} COMMAND test_${suite})
+    # ConfigParser integration fixtures resolve relative to the repository root.
+    set_tests_properties(${suite} PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endforeach()
 
 find_package(Python3 COMPONENTS Interpreter QUIET)
