@@ -22,9 +22,14 @@ jobs:
           from pathlib import Path
           log = Path('build/Testing/Temporary/LastTest.log')
           if log.exists():
-              for line in log.read_text(errors='replace').splitlines()[-250:]:
-                  escaped = line.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-                  print('::error title=Native test diagnostic::' + escaped)
+              import re
+              text = log.read_text(errors='replace')
+              failures = Path('build/Testing/Temporary/LastTestsFailed.log')
+              if failures.exists():
+                  print('::error title=Failed test names::' + failures.read_text().replace('\n', '%0A'))
+              for block in [b for b in re.split(r'\n\d+/\d+ Testing:', text) if 'Test Failed.' in b][:8]:
+                  message = (block[:5000] + block[-1000:]).replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print('::error title=Native test diagnostic::' + message)
   sanitizers:
     strategy:
       fail-fast: false
@@ -46,9 +51,14 @@ jobs:
           from pathlib import Path
           log = Path('build/Testing/Temporary/LastTest.log')
           if log.exists():
-              for line in log.read_text(errors='replace').splitlines()[-250:]:
-                  escaped = line.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-                  print('::error title=Native test diagnostic::' + escaped)
+              import re
+              text = log.read_text(errors='replace')
+              failures = Path('build/Testing/Temporary/LastTestsFailed.log')
+              if failures.exists():
+                  print('::error title=Failed test names::' + failures.read_text().replace('\n', '%0A'))
+              for block in [b for b in re.split(r'\n\d+/\d+ Testing:', text) if 'Test Failed.' in b][:8]:
+                  message = (block[:5000] + block[-1000:]).replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print('::error title=Native test diagnostic::' + message)
   valgrind:
     runs-on: ubuntu-latest
     steps:
