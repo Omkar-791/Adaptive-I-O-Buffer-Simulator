@@ -15,6 +15,16 @@ jobs:
       - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
       - run: cmake --build build --config Release --parallel 2
       - run: ctest --test-dir build -C Release --output-on-failure --timeout 180
+      - name: Publish failed test diagnostics
+        if: failure()
+        shell: python
+        run: |
+          from pathlib import Path
+          log = Path('build/Testing/Temporary/LastTest.log')
+          if log.exists():
+              for line in log.read_text(errors='replace').splitlines()[-250:]:
+                  escaped = line.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print('::error title=Native test diagnostic::' + escaped)
   sanitizers:
     strategy:
       fail-fast: false
@@ -29,6 +39,16 @@ jobs:
         env:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           TSAN_OPTIONS: halt_on_error=1
+      - name: Publish failed test diagnostics
+        if: failure()
+        shell: python
+        run: |
+          from pathlib import Path
+          log = Path('build/Testing/Temporary/LastTest.log')
+          if log.exists():
+              for line in log.read_text(errors='replace').splitlines()[-250:]:
+                  escaped = line.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print('::error title=Native test diagnostic::' + escaped)
   valgrind:
     runs-on: ubuntu-latest
     steps:
