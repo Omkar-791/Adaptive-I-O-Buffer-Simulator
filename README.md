@@ -1,6 +1,6 @@
 # Adaptive I/O Buffer Management & Performance Optimization System
 
-C++17 Operating Systems course project modeling concurrent producer-consumer I/O streams under a shared buffer-slot budget. Current milestone: **Phase 13 Experiment and Analysis Interface**. The React workspace connects to the Phase10 bridge for real native simulations, cursor-polled telemetry and final results. Adaptive operation remains opt-in; WebSocket transport is future work.
+C++17 Operating Systems course project modeling concurrent producer-consumer I/O streams under a shared buffer-slot budget. Current milestone: **Phase 14 Testing and Integration — verified**. The React workspace connects to the Phase10 bridge for real native simulations, cursor-polled telemetry and final results. Adaptive operation remains opt-in; WebSocket transport is future work.
 
 ## Structure
 
@@ -110,7 +110,7 @@ Adaptive telemetry includes buffer_resize results with previous/requested/actual
 
 All nine C++ suites passed a fresh warning-free GCC build and execution: 38 original tests, six metrics groups, seven controller groups, nine resizing groups and four experiment groups. All 40 Python tests passed: nine existing statistics/driver tests, 25 workflow/recovery tests and six export/atomic-I/O tests. Some filesystem tests required approved access; bounded Windows sharing-error recovery was implemented and tested. All five example configurations were exercised with NDJSON validation. CMake/CTest were unavailable in that environment; the CMake targets were updated but not executed. ThreadSanitizer linking failed because this GCC installation lacks libtsan. No race-free or overhead claim is made.
 
-Legacy resource-manager resize hooks remain accounting-only and are blocked while an executor is bound. Use RuntimeResizeExecutor for physical changes. The next milestone is **Phase 14 Testing and Integration**.
+Legacy resource-manager resize hooks remain accounting-only and are blocked while an executor is bound. Use RuntimeResizeExecutor for physical changes. The next milestone is **Phase 15 Final Evaluation, Report, and Viva Preparation** (not started).
 
 ## Adaptive I/O Lab
 
@@ -138,4 +138,4 @@ History remains in memory. [Workflow contract](docs/PHASE13_API_CONTRACT.md),
 
 ## Phase14 testing and hardening
 
-Native stress and real-system orchestration are available under tests/. See [testing commands](docs/TESTING_PHASE14.md) and [actual acceptance status](docs/PHASE14_COMPLETION_REPORT.md). Phase14 is partial: local checks do not establish sanitizer cleanliness, remote-platform execution or one-hour sustained resizing. Phase15 has not started.
+Native stress and real-system orchestration are available under tests/. See [testing commands](docs/TESTING_PHASE14.md) and [actual acceptance status](docs/PHASE14_COMPLETION_REPORT.md). Phase14 verification passed: real integration/regression tests, fresh native builds, Linux/Windows/macOS CI, Linux ASan/TSan/Valgrind and the original3603.466s adaptive stress run with828000 completed requests and3107 applied resizes. Results cover the documented workloads; the hour test uses repeated Simulation batches. Phase15 has not started.

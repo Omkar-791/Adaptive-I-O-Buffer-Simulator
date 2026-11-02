@@ -2,7 +2,7 @@
 
 The current Phase11 master specification supersedes the older Phase11/12 split below: Phase11 now delivers Adaptive I/O Lab, the React frontend with cursor-based polling over the existing Phase10 API. Dashboard, configuration, run inspection, history, architecture, editable wireframes and browser integration are implemented in client/. See PHASE11_COMPLETION_REPORT.md for evidence. WebSocket transport remains deferred and is not required for these live polling views. The older Phase12 dashboard description is retained as historical planning context, not a claim of missing Phase11 screens.
 
-Phase13 now delivers descriptive matched-pair comparison/export through the unchanged API; see PHASE13_API_CONTRACT.md and PHASE13_COMPLETION_REPORT.md. Persistent storage remains deferred, not a Phase13 requirement. The next numbered milestone is Phase14 Testing and Integration.
+Phase13 now delivers descriptive matched-pair comparison/export through the unchanged API; see PHASE13_API_CONTRACT.md and PHASE13_COMPLETION_REPORT.md. Persistent storage remains deferred, not a Phase13 requirement. Phase14 verification is now complete; the next numbered milestone is Phase15 Final Evaluation, Report, and Viva Preparation (not started).
 
 # Development Roadmap
 
@@ -300,9 +300,9 @@ Delivered in History: matched independent fixed/adaptive native launches, retain
 
 ---
 
-### Phase 14: Testing and Integration [PARTIAL — verification gates remain]
+### Phase 14: Testing and Integration [IMPLEMENTED AND VERIFIED]
 
-Phase14 adds a real integration orchestrator, bounded native stress harness, isolated sanitizer options and platform CI. Local GCC builds, regressions and short stress checks passed; ASan/TSan/Valgrind, remote platform results and the one-hour acceptance remain unverified. See PHASE14_COMPLETION_REPORT.md and TESTING_PHASE14.md. Do not treat this milestone as complete.
+Phase14 delivers the real integration orchestrator, bounded native stress harness, isolated sanitizer options and platform CI. Local fresh GCC builds and regressions passed; Linux/Windows/macOS CMake/CTest and Linux ASan/TSan/Valgrind jobs passed. The original full-hour repeated adaptive-batch run completed in3603.466s with828000 completed requests,3107 applied resizes and clean exit0. See PHASE14_COMPLETION_REPORT.md and TESTING_PHASE14.md for commands, evidence and coverage limits. Phase15 has not started.
 - **Objective**: End-to-end system testing, performance optimization, and hardening.
 - **Features**:
   - Comprehensive integration test suite linking C++, Node.js, and client pipelines.
