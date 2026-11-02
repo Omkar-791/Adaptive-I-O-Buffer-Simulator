@@ -258,9 +258,9 @@ The feature list below is historical planning; the opening override and Phase11 
 
 ---
 
-### Phase 12: React Dashboard [SATISFIED BY PHASE 11]
+### Phase 12: React Dashboard [SUPERSEDED — replacement dashboard delivered in Phase 11]
 
-The historical implementation sketch below is superseded by the Phase11 override: React/Vite/TypeScript/custom tokens and real polling dashboards are delivered and browser-verified. No dashboard rebuild, Tailwind migration or invented drop/worker-state metrics is required.
+The Phase11 master specification superseded the older Phase11/12 split. The historical dashboard description below is retained for context and is not outstanding implementation work. The replacement uses React/Vite/TypeScript/custom tokens and real polling dashboards. No separate dashboard rebuild, Tailwind migration, additional occupancy gauge, historical latency time-series chart, or old drop-count cards/worker-status metrics are required merely to satisfy this superseded scope.
 - **Objective**: Develop an interactive web dashboard for real-time simulation monitoring.
 - **Features**:
   - Built with React, Vite, and Tailwind CSS.
@@ -300,7 +300,9 @@ Delivered in History: matched independent fixed/adaptive native launches, retain
 
 ---
 
-### Phase 14: Testing and Integration
+### Phase 14: Testing and Integration [PARTIAL — verification gates remain]
+
+Phase14 adds a real integration orchestrator, bounded native stress harness, isolated sanitizer options and platform CI. Local GCC builds, regressions and short stress checks passed; ASan/TSan/Valgrind, remote platform results and the one-hour acceptance remain unverified. See PHASE14_COMPLETION_REPORT.md and TESTING_PHASE14.md. Do not treat this milestone as complete.
 - **Objective**: End-to-end system testing, performance optimization, and hardening.
 - **Features**:
   - Comprehensive integration test suite linking C++, Node.js, and client pipelines.

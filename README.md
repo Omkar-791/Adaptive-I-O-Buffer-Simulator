@@ -135,3 +135,7 @@ This descriptive pair can run concurrently and is affected by scheduling content
 Use the Phase9 CLI for counterbalanced, multi-repetition provenance-checked experiments.
 History remains in memory. [Workflow contract](docs/PHASE13_API_CONTRACT.md),
 [implementation plan](docs/PHASE13_PLAN.md), [completion and acceptance](docs/PHASE13_COMPLETION_REPORT.md).
+
+## Phase14 testing and hardening
+
+Native stress and real-system orchestration are available under tests/. See [testing commands](docs/TESTING_PHASE14.md) and [actual acceptance status](docs/PHASE14_COMPLETION_REPORT.md). Phase14 is partial: local checks do not establish sanitizer cleanliness, remote-platform execution or one-hour sustained resizing. Phase15 has not started.
