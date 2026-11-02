@@ -98,7 +98,14 @@ class ExperimentStatisticsTests(unittest.TestCase):
             config = root/'case.json'; config.write_text('{}', encoding='utf-8')
             output = root/'results'
             process = subprocess.CompletedProcess([], 2, stdout='malformed', stderr='fixture failure')
-            with mock.patch.object(runner.subprocess, 'run', return_value=process), contextlib.redirect_stdout(io.StringIO()):
+            real_run = runner.subprocess.run
+            def native_failure(command, *args, **kwargs):
+                # platform.platform() itself invokes subprocess.run on macOS.
+                # Inject only the intended native child, preserving host discovery.
+                if command and str(command[0]) == str(exe):
+                    return process
+                return real_run(command, *args, **kwargs)
+            with mock.patch.object(runner.subprocess, 'run', side_effect=native_failure), contextlib.redirect_stdout(io.StringIO()):
                 status = runner.main(['--exe', str(exe), '--configs', str(config), '--strategies', 'fixed_equal',
                                       '--repetitions', '1', '--output', str(output)])
             self.assertEqual(status, 1)
