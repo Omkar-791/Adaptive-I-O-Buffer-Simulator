@@ -102,7 +102,7 @@ class ExperimentStatisticsTests(unittest.TestCase):
             def native_failure(command, *args, **kwargs):
                 # platform.platform() itself invokes subprocess.run on macOS.
                 # Inject only the intended native child, preserving host discovery.
-                if command and str(command[0]) == str(exe):
+                if isinstance(command, (list, tuple)) and command and pathlib.Path(command[0]).resolve() == exe.resolve():
                     return process
                 return real_run(command, *args, **kwargs)
             with mock.patch.object(runner.platform, 'platform', return_value='test-platform'), \
