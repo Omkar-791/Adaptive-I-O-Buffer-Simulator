@@ -16,7 +16,7 @@ function createApp({manager,allowedOrigin=null}={}){
   if(req.method==='OPTIONS')return res.sendStatus(204);
   next();
  });
- app.use(express.json({limit:65536,strict:true,inflate:false}));
+ app.use(express.json({limit:131072,strict:true,inflate:false}));
  const route=fn=>(req,res,next)=>Promise.resolve().then(()=>fn(req,res)).catch(next);
  function query(req,allowed){if(Object.keys(req.query).some(k=>!allowed.includes(k)))throw apiError(400,'INVALID_QUERY','Unsupported query parameter.');}
  function number(value,def){if(value===undefined)return def;if(typeof value!=='string'||!/^\d+$/.test(value)||!Number.isSafeInteger(Number(value)))throw apiError(400,'INVALID_QUERY','Query values must be nonnegative integers.');return Number(value);}
@@ -35,7 +35,7 @@ function createApp({manager,allowedOrigin=null}={}){
  app.use((error,req,res,next)=>{
   if(res.headersSent)return next(error);
   if(error instanceof URIError)return res.status(400).json({error:{code:'INVALID_REQUEST',message:'Invalid URL encoding.'}});
-  if(error.type==='entity.too.large')return res.status(413).json({error:{code:'BODY_TOO_LARGE',message:'JSON body exceeds 64 KiB.'}});
+  if(error.type==='entity.too.large')return res.status(413).json({error:{code:'BODY_TOO_LARGE',message:'JSON body exceeds 128 KiB.'}});
   if(['encoding.unsupported','charset.unsupported'].includes(error.type))return res.status(415).json({error:{code:'UNSUPPORTED_ENCODING',message:'Use uncompressed UTF-8 JSON.'}});
   if(['request.aborted','request.size.invalid'].includes(error.type))return res.status(400).json({error:{code:'INVALID_REQUEST',message:'Request body could not be read.'}});
   if(error.type==='entity.parse.failed')return res.status(400).json({error:{code:'INVALID_JSON',message:'Request body must be valid JSON.'}});

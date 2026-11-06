@@ -1,13 +1,19 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Play, SlidersHorizontal } from 'lucide-react';
 import { api } from '../api/client';
 import type { CreateRun } from '../types/api';
 import { defaults, validateForm, type FormValues } from './validation';
+import { ConfigurationReuse } from '../components/ConfigurationReuse';
 
 const labels: Record<keyof FormValues, string> = { streams: 'Number of streams', requests: 'Requests per stream', seed: 'Random seed', capacity: 'Buffer capacity', budget: 'Global buffer budget', producer: 'Producer interval', consumer: 'Consumer processing time', minimum: 'Minimum payload size', maximum: 'Maximum payload size', interval: 'Sampling interval', window: 'Metrics window' };
 const units: Partial<Record<keyof FormValues, string>> = { capacity: 'slots / stream', budget: 'slots', producer: 'ms', consumer: 'ms', minimum: 'bytes', maximum: 'bytes', interval: 'ms', window: 'ms' };
 export default function NewRun() {
+  const [params] = useSearchParams();
+  const reuse = params.get('reuse');
+  return reuse ? <ConfigurationReuse key={reuse} sourceId={reuse}/> : <UniformNewRun/>;
+}
+function UniformNewRun() {
   const navigate = useNavigate();
   const [values, setValues] = useState<FormValues>(defaults);
   const [strategy, setStrategy] = useState<'fixed' | 'adaptive'>('adaptive');

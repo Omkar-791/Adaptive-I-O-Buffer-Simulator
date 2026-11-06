@@ -76,7 +76,7 @@ test('unknown IDs and invalid cursors return consistent safe JSON errors',async 
 
 test('request-size limits and malformed JSON fail before native launch',async t=>{
   const {base,fake}=await api(t);
-  const large=await fetch(base+'/api/v1/runs',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({config:{name:'x'.repeat(100000)}})});
+  const large=await fetch(base+'/api/v1/runs',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({config:{name:'x'.repeat(150000)}})});
   assert.equal(large.status,413);assert.equal(typeof(await large.json()).error.code,'string');
   const malformed=await fetch(base+'/api/v1/runs',{method:'POST',headers:{'content-type':'application/json'},body:'{"config":'});
   assert.equal(malformed.status,400);assert.equal(typeof(await malformed.json()).error.code,'string');

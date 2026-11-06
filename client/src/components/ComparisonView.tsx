@@ -6,17 +6,26 @@ import { useRun } from '../hooks/useRun';
 import type { RunSummary } from '../types/api';
 import { AllocationEvents, RunStrip } from './RunView';
 import { analysisDataset, analysisLimitations, comparisonProblem, comparisonRows, downloadAnalysis } from './analysis';
+import GeneralComparison from './GeneralComparison';
 
 export default function ComparisonView({ runs, refresh }: { runs: RunSummary[]; refresh: () => void }) {
   const [params, setParams] = useSearchParams();
-  const fixedId = params.get('fixed') || ''; const adaptiveId = params.get('adaptive') || '';
+  const general = params.get('comparison') === 'general';
+  return <><div className="comparison-mode" role="group" aria-label="Comparison mode"><button type="button" aria-pressed={!general} onClick={() => setParams(previous => { const next = new URLSearchParams(previous); next.delete('comparison'); return next; })}>Matched fixed/adaptive pair</button><button type="button" aria-pressed={general} onClick={() => setParams(previous => { const next = new URLSearchParams(previous); next.set('comparison', 'general'); return next; })}>Compare any runs</button></div>{general ? <GeneralComparison runs={runs}/> : <MatchedComparison runs={runs} refresh={refresh}/>}</>;
+}
+
+function MatchedComparison({ runs, refresh }: { runs: RunSummary[]; refresh: () => void }) {
+  const [params, setParams] = useSearchParams();
+  const [admittedFixedId, setAdmittedFixedId] = useState('');
+  const fixedId = admittedFixedId || params.get('fixed') || ''; const adaptiveId = params.get('adaptive') || '';
   const fixed = useRun(fixedId || undefined);
   // A malformed URL must not create duplicate polling for the same ID.
   const adaptive = useRun(adaptiveId && adaptiveId !== fixedId ? adaptiveId : undefined);
   const [source, setSource] = useState(''); const [launching, setLaunching] = useState(false); const [error, setError] = useState('');
   const mounted = useRef(true); const pending = useRef(false);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  const select = (key: string, id: string) => setParams(previous => { const next = new URLSearchParams(previous); if (id) next.set(key,id); else next.delete(key); return next; });
+  useEffect(() => { if (params.get('fixed')) setAdmittedFixedId(''); }, [params]);
+  const select = (key: string, id: string) => { if (key === 'fixed') setAdmittedFixedId(''); setParams(previous => { const next = new URLSearchParams(previous); if (id) next.set(key,id); else next.delete(key); return next; }); };
   async function launch() {
     const original = runs.find(run => run.id === source);
     if (!original || pending.current) return;
@@ -26,6 +35,8 @@ export default function ComparisonView({ runs, refresh }: { runs: RunSummary[]; 
       const body = original.configuration;
       first = await api.create({ ...body, strategy: 'fixed' });
       if (!mounted.current) return;
+      // Preserve the actual admitted run immediately, including before URL navigation commits.
+      setAdmittedFixedId(first.id);
       setParams(previous => { const next = new URLSearchParams(previous); next.set('fixed',first!.id); next.delete('adaptive'); return next; });
       if (first.status === 'failed') throw new Error('Fixed process launch failed. Inspect its reported error before launching another pair.');
       const second = await api.create({ ...body, strategy: 'adaptive' });

@@ -6,11 +6,16 @@ const path = require('node:path');
 const { RunManager } = require('../src/run-manager');
 const { normalized, fixtureSpawner, waitTerminal, testRoot, delay } = require('./helpers');
 
-async function managerFixture(t, scenario='success', overrides={}) {
+async function managerFixture(t, scenario='success', overrides={}, allowUnconfirmed=false) {
   const root=await testRoot(); const fake=fixtureSpawner(scenario);
   const manager=new RunManager({ executablePath: process.execPath, cwd: path.resolve(__dirname, '../..'),
     tempRoot: root, spawn: fake.spawn, timeoutMs: 1000, ...overrides });
-  t.after(async () => { await manager.close(); await fs.rm(root,{recursive:true,force:true}); });
+  t.after(async () => {
+    try { await manager.close(); } catch(error) {
+      if(!allowUnconfirmed || error.code!=='SHUTDOWN_INCOMPLETE')throw error;
+    }
+    await fs.rm(root,{recursive:true,force:true});
+  });
   return { root, manager, fake };
 }
 
@@ -115,12 +120,15 @@ test('cancellation escalates to kill if the child ignores initial termination', 
 });
 
 test('unconfirmed native termination reports shutdown failure rather than claiming completion', async t => {
-  const {manager,fake}=await managerFixture(t,'pending',{shutdownTimeoutMs:20,killGraceMs:5});
+  const {manager,fake}=await managerFixture(t,'pending',{shutdownTimeoutMs:20,killGraceMs:5},true);
   const run=await manager.create(normalized());fake.calls[0].child.kill=()=>false;
   await assert.rejects(manager.close(),error=>error.code==='SHUTDOWN_INCOMPLETE');
-  assert.ok(['starting','running'].includes(manager.get(run.id).status));
+  assert.equal(manager.get(run.id).status,'failed');
+  assert.equal(manager.get(run.id).error.code,'NATIVE_TERMINATION_UNCONFIRMED');
   assert.equal((await manager.health()).activeRuns,1);
-  fake.calls[0].finish(null,'SIGKILL');assert.equal((await waitTerminal(manager,run.id)).status,'cancelled');
+  assert.equal((await manager.health()).status,'stopping');
+  assert.equal(manager.runs.get(run.id).child,null);
+  fake.calls[0].finish(null,'SIGKILL');assert.equal((await waitTerminal(manager,run.id)).status,'failed');
 });
 
 

@@ -1,0 +1,68 @@
+name: Native build and tests
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build --config Release --parallel 2
+      - run: ctest --test-dir build -C Release --output-on-failure --timeout 180
+      - name: Publish failed test diagnostics
+        if: failure()
+        shell: python
+        run: |
+          from pathlib import Path
+          log = Path('build/Testing/Temporary/LastTest.log')
+          if log.exists():
+              import re
+              text = log.read_text(errors='replace')
+              failures = Path('build/Testing/Temporary/LastTestsFailed.log')
+              if failures.exists():
+                  print('::error title=Failed test names::' + failures.read_text().replace('\n', '%0A'))
+              for block in [b for b in re.split(r'\n\d+/\d+ Testing:', text) if 'Test Failed.' in b][:8]:
+                  message = (block[:5000] + block[-1000:]).replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print('::error title=Native test diagnostic::' + message)
+  sanitizers:
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [ASAN, TSAN]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DADAPTIVE_IO_${{ matrix.sanitizer }}=ON
+      - run: cmake --build build --parallel 2
+      - run: ctest --test-dir build --output-on-failure --timeout 180 -E "experiment_statistics|experiment_workflow|experiment_exports"
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          TSAN_OPTIONS: halt_on_error=1
+      - name: Publish failed test diagnostics
+        if: failure()
+        shell: python
+        run: |
+          from pathlib import Path
+          log = Path('build/Testing/Temporary/LastTest.log')
+          if log.exists():
+              import re
+              text = log.read_text(errors='replace')
+              failures = Path('build/Testing/Temporary/LastTestsFailed.log')
+              if failures.exists():
+                  print('::error title=Failed test names::' + failures.read_text().replace('\n', '%0A'))
+              for block in [b for b in re.split(r'\n\d+/\d+ Testing:', text) if 'Test Failed.' in b][:8]:
+                  message = (block[:5000] + block[-1000:]).replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print('::error title=Native test diagnostic::' + message)
+  valgrind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y valgrind
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug && cmake --build build --parallel 2
+      - run: valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --error-exitcode=99 build/test_runtime_resizing

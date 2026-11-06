@@ -8,6 +8,8 @@ export interface AnalysisMember {
   truncated: boolean;
   clientTruncated: boolean;
   error?: string;
+  nextCursor?: number;
+  oldestCursor?: number;
 }
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
@@ -25,6 +27,7 @@ export function comparisonProblem(fixed: AnalysisMember, adaptive: AnalysisMembe
   const counts = (r: Result) => ({ produced: r.total_produced, consumed: r.total_consumed, bytes: r.total_bytes, streams: [...r.streams].sort((a,b) => a.stream_id-b.stream_id).map(s => [s.stream_id,s.total_produced,s.total_consumed,s.total_bytes]) });
   if (!fixed.result.success || !adaptive.result.success || canonical(counts(fixed.result)) !== canonical(counts(adaptive.result))) return 'Measured request counts or payload bytes differ; these results cannot be paired.';
   if ([fixed.result, adaptive.result].some(r => metricDefinitions.some(m => !Number.isFinite(r[m.key]) || r[m.key] < 0))) return 'Final measurements are invalid or unavailable.';
+  if ([fixed.result, adaptive.result].some(r => r.total_consumed === 0)) return 'Mean latency unavailable without completed operations. Use Compare any runs to inspect other available measurements.';
   return null;
 }
 export const metricDefinitions = [
@@ -41,7 +44,9 @@ export function comparisonRows(fixed: AnalysisMember, adaptive: AnalysisMember) 
 }
 export const analysisLimitations = 'Descriptive single-pair comparison. Concurrent runs can compete for CPU and timers. Seeded nominal configurations and measured counts/bytes are checked; native input checksums, executable hashes and statistical significance are unavailable through this API. Use the Phase9 CLI for reproducible multi-repetition evaluation. History is in memory; telemetry is a bounded observed subset.';
 export function analysisDataset(fixed: AnalysisMember, adaptive: AnalysisMember) {
-  const member = (m: AnalysisMember) => ({ requestedId: m.requestedId || m.run?.id || null, run: m.run ?? null, result: m.result ?? null, records: m.records, backendTruncated: m.truncated, browserTruncated: m.clientTruncated, observationError: m.error ?? null });
+  const observed = (m: AnalysisMember): AnalysisMember => m.requestedId && m.run && m.requestedId !== m.run.id ? {...m,run:undefined,result:undefined,records:[],error:'Requested run observations are unavailable; mismatched cached observations were withheld.'} : m;
+  fixed=observed(fixed);adaptive=observed(adaptive);
+  const member = (m: AnalysisMember) => ({ requestedId: m.requestedId || m.run?.id || null, run: m.run ?? null, result: m.run?.status === 'completed' && m.result?.success ? m.result : null, records: m.records, backendTruncated: m.truncated, browserTruncated: m.clientTruncated, nextCursor: m.nextCursor ?? null, oldestCursor: m.oldestCursor ?? null, observationError: m.error ?? null });
   return { schemaVersion: 1, exportedAt: new Date().toISOString(), source: 'Adaptive I/O Lab Phase10 REST / native simulation_completed', limitations: analysisLimitations, comparisonUnavailable: comparisonProblem(fixed, adaptive), metrics: comparisonRows(fixed, adaptive), fixed: member(fixed), adaptive: member(adaptive) };
 }
 export function analysisCsv(dataset: ReturnType<typeof analysisDataset>) {

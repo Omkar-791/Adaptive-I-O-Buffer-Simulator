@@ -22,12 +22,13 @@ export function mergeTelemetry(previous:TelemetryEvent[],page:TelemetryEnvelope,
 export function useRun(id?:string){
  const [run,setRun]=useState<RunSummary>();const [records,setRecords]=useState<TelemetryEvent[]>([]);const [result,setResult]=useState<Result>();
  const [error,setError]=useState<string>();const [loading,setLoading]=useState(false);const [truncated,setTruncated]=useState(false);const [clientTruncated,setClientTruncated]=useState(false);const [cancelling,setCancelling]=useState(false);const [generation,setGeneration]=useState(0);
+ const [cursorMetadata,setCursorMetadata]=useState<{nextCursor?:number;oldestCursor?:number}>({});
  const session=useRef<{id?:string;cursor:number;records:TelemetryEvent[]}>({cursor:0,records:[]});
  const cancellation=useRef<AbortController|undefined>(undefined);
  const cancelPending=useRef(false);
  const retry=useCallback(()=>setGeneration(n=>n+1),[]);
  useEffect(()=>{
-  if(session.current.id!==id){session.current={id,cursor:0,records:[]};setRun(undefined);setRecords([]);setResult(undefined);setTruncated(false);setClientTruncated(false)}
+  if(session.current.id!==id){session.current={id,cursor:0,records:[]};setRun(undefined);setRecords([]);setResult(undefined);setTruncated(false);setClientTruncated(false);setCursorMetadata({})}
   setError(undefined);setCancelling(false);cancelPending.current=false;setLoading(!!id&&session.current.cursor===0);
   if(!id)return;
   const current=session.current;
@@ -39,6 +40,7 @@ export function useRun(id?:string){
     do{
      const page=await api.telemetry(id!,current.cursor,controller.signal);if(controller.signal.aborted)return;
      const before=current.cursor;const merged=mergeTelemetry(current.records,page,current.cursor);
+     setCursorMetadata({nextCursor:page.nextCursor,oldestCursor:page.oldestCursor});
      current.records=merged.records;current.cursor=merged.cursor;setRecords(current.records);
      if(page.truncated)setTruncated(true);if(merged.clientTruncated)setClientTruncated(true);
      again=!activeRun(summary.status)&&page.records.length>=100&&current.cursor>before;
@@ -65,5 +67,5 @@ export function useRun(id?:string){
   catch(cause){if(!abort.signal.aborted)setError(cause instanceof Error?cause.message:'Cancellation request failed.')}
   finally{if(!abort.signal.aborted){cancelPending.current=false;setCancelling(false)}}
  },[id,run]);
- return {run,records,result,error,loading,truncated,clientTruncated,retry,cancel,cancelling};
+ return {run,records,result,error,loading,truncated,clientTruncated,retry,cancel,cancelling,...cursorMetadata};
 }

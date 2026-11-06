@@ -62,6 +62,9 @@ public:
         }
         JsonVal val = parseValue();
         skipWhitespace();
+        if (pos_ != len_) {
+            throw std::runtime_error("Unexpected trailing data after JSON document");
+        }
         return val;
     }
 

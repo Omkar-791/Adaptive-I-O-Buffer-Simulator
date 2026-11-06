@@ -1,67 +1,101 @@
-# Build directories
+# Build and package outputs
 build/
 bin/
 out/
 .cache/
+/build_phase[0-9]*/
+/build_audit/
+/CMakeFiles/
+/CMakeCache.txt
+/Testing/
+*.exe
+*.obj
+*.pdb
 
-# IDE files
+# IDE and operating system files
 .vscode/
 .idea/
 *.suo
 *.user
-
-# Operating System files
 Thumbs.db
 Desktop.ini
 .DS_Store
 
-# Node / Web dependencies (for future phases)
+# Dependencies, caches and test outputs
 node_modules/
 dist/
 .vite/
-
-# Experiment artifacts
-data/runs/*
-!data/runs/.gitkeep
-
-# Phase 5 local verification build
-build_phase5/
-
-# Phase 6 local verification build
-build_phase6/
-
-# Phase 7 local verification build
-build_phase7/
-
-# Phase 8 local verification build
-build_phase8/
-
-# Phase 9 local validation builds
-build_phase9/
-
-# Python caches and transient workflow owner lock
 __pycache__/
 *.py[cod]
-.workflow.lock
+/client/test-results/
+/client/playwright-report/
+/client/*.tsbuildinfo
 
-# Ephemeral backend native inputs
-server/.runs/
-
-# Phase 10 local validation build
-build_phase10/
-
-# Frontend verification artifacts
-client/test-results/
-client/playwright-report/
-build_phase11/
-build_phase13/
-build_audit/
+# Environment and runtime files
 .env
 .env.*
 !.env.example
 *.log
-client/*.tsbuildinfo
+.workflow.lock
+/server/.runs/
+/data/runs/*
+!/data/runs/.gitkeep
 
-# Isolated Phase14 builds and machine-specific test evidence
-build_phase14/
-build_phase15/
+# Historical experiment evidence
+/data/experiments/
+/data/plots/
+
+# Local documentation, audit scratch files and evaluation scripts
+/.github/workflows/phase14.yml
+/AGENTS.md
+/client/AGENTS.md
+/client/README.md
+/data/audit_json_clean.json
+/data/audit_json_out.txt
+/data/audit_test_err.txt
+/data/audit_test_out.txt
+/data/validate_json.js
+/data/vjs.js
+/docs/ADAPTIVE_CONTROLLER_DESIGN.md
+/docs/ARCHITECTURE.md
+/docs/BACKEND_INTEGRITY_PHASE4.md
+/docs/BACKEND_LIFECYCLE_PHASE3.md
+/docs/BACKEND_PHASE10.md
+/docs/CONTROLLER_PHASE6.md
+/docs/DEVELOPMENT_ROADMAP.md
+/docs/EXPERIMENTS_PHASE8.md
+/docs/EXPERIMENTS_PHASE9.md
+/docs/EXPERIMENT_PLAN.md
+/docs/FINAL_REPORT.md
+/docs/INTEGRATION_CONTRACT.md
+/docs/METRICS.md
+/docs/METRICS_PHASE5.md
+/docs/PHASE10_COMPLETION_REPORT.md
+/docs/PHASE10_NATIVE_CONTRACT.md
+/docs/PHASE11_COMPLETION_REPORT.md
+/docs/PHASE13_API_CONTRACT.md
+/docs/PHASE13_COMPLETION_REPORT.md
+/docs/PHASE13_PLAN.md
+/docs/PHASE14_COMPLETION_REPORT.md
+/docs/PHASE14_PLAN.md
+/docs/PHASE15_COMPLETION_REPORT.md
+/docs/PHASE15_EVIDENCE.md
+/docs/PHASE5_COMPLETION_REPORT.md
+/docs/PHASE6_COMPLETION_REPORT.md
+/docs/PHASE7_COMPLETION_REPORT.md
+/docs/PHASE8_COMPLETION_REPORT.md
+/docs/PHASE8_EXPERIMENTAL_REPORT.md
+/docs/PHASE9_COMPLETION_REPORT.md
+/docs/PHASE9_EXPERIMENTAL_REPORT.md
+/docs/PROJECT_SPECIFICATION.md
+/docs/REPRODUCIBILITY_PHASE5.md
+/docs/RUNTIME_RESIZING_PHASE7.md
+/docs/TESTING_PHASE14.md
+/docs/VIVA_DEMO_GUIDE.md
+/docs/VIVA_PRESENTATION.md
+/docs/WORKLOAD_GENERATOR.md
+/docs/design/wireframes/README.md
+/scripts/demo_phase15.py
+/scripts/plot_phase15.py
+/scripts/test_phase15.py
+/server/README.md

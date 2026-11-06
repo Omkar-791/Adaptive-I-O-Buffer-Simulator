@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom';
+import { useId, useState } from 'react';
 import { Square } from 'lucide-react';
 import type { RunSummary, Result, TelemetryEvent, Snapshot, Resize } from '../types/api';
 import { activeRun } from '../hooks/useRun';
 import { MetricChart } from './Charts';
+import { AdaptiveTimeline } from './AdaptiveTimeline';
+import { buildResizeEvents } from './resizeTimeline';
 
 const labels: Record<string, string> = { starting: 'Starting', running: 'Running', completed: 'Completed', failed: 'Failed', cancelled: 'Cancelled', timed_out: 'Timed out' };
 export const statusLabel = (status: string) => labels[status] ?? status;
@@ -27,9 +30,17 @@ export function Kpis({ snapshots, result, records = [] }: { snapshots: Snapshot[
   const global = sample?.global;
   const source = result ? 'Whole-run final summary' : sample ? `Native window · ${value(sample.window_ms)} ms` : 'Waiting for native telemetry';
   const resizeCount = records.filter(event => event.record.type === 'buffer_resize').length;
-  const latency = result?.avg_latency_ms ?? global?.avg_latency_ms;
+  // Final counts identify whole-run observations; window throughput identifies
+  // completions in that window (the snapshot consumed count is cumulative).
+  const hasLatencyObservations = result
+    ? Number.isFinite(result.total_consumed) && result.total_consumed > 0
+    : !!sample && Number.isFinite(sample.window_ms) && sample.window_ms > 0
+      && Number.isFinite(global?.throughput_req_per_sec) && global!.throughput_req_per_sec > 0;
+  const candidateLatency = result ? result.avg_latency_ms : global?.avg_latency_ms;
+  const latency = hasLatencyObservations && typeof candidateLatency === 'number'
+    && Number.isFinite(candidateLatency) && candidateLatency >= 0 ? candidateLatency : undefined;
   const metrics = [
-    ['Throughput', result?.throughput_req_per_sec ?? global?.throughput_req_per_sec, 'req/s', `${source} · Mean latency ${value(latency)} ms`],
+    ['Throughput', result?.throughput_req_per_sec ?? global?.throughput_req_per_sec, 'req/s', `${source} · Mean latency ${latency === undefined ? '— (unavailable: no valid latency observations)' : `${value(latency)} ms`}`],
     ['Buffer Occupancy', global?.occupancy, 'slots', sample ? `Last native sample · ${value(global?.utilization_pct)}% window utilization` : 'Unavailable · no native sample'],
     ['Backpressure', result?.total_producer_wait_ms ?? global?.producer_wait_ms, 'ms', `Producer waiting · ${source}`],
     ['Buffer Capacity', result?.total_allocated_capacity ?? global?.capacity, 'slots', `${result ? 'Final allocation' : 'Last native sample'} · ${resizeCount} retained resize decisions`],
@@ -67,15 +78,26 @@ export function StreamTable({ run, snapshots, result }: { run: RunSummary; snaps
   </section>;
 }
 
-export function RunView({ run, records, result, cancel, cancelling }: { run: RunSummary; records: TelemetryEvent[]; result?: Result; cancel: () => void; cancelling: boolean }) {
+export function RunView({ run, records, result, cancel, cancelling, adaptiveTimeline = false }: { run: RunSummary; records: TelemetryEvent[]; result?: Result; cancel: () => void; cancelling: boolean; adaptiveTimeline?: boolean }) {
+  const timelineId = useId();
+  const [selection, setSelection] = useState<{ runId: string; index: number }>();
   const snapshots = records.flatMap(event => event.record.type === 'metrics_snapshot' ? [event.record] : []);
+  const events = adaptiveTimeline ? buildResizeEvents(records, snapshots) : [];
+  const selectedResizeIndex = selection?.runId === run.id ? selection.index : undefined;
+  const selectResize = (index: number) => {
+    setSelection({ runId: run.id, index });
+    const target = document.getElementById(`${timelineId}-resize-${index}`);
+    target?.focus({ preventScroll: true });
+    target?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+  };
+  const markerProps = adaptiveTimeline ? { resizeEvents: events, selectedResizeIndex, onSelectResize: selectResize } : {};
   return <div className="run-view">
     <RunStrip run={run} snapshots={snapshots} cancel={cancel} cancelling={cancelling} />
     {run.error && <div className="error-message" role="alert"><strong>{run.error.code}</strong> · {run.error.message}</div>}
     {run.status !== 'completed' && !activeRun(run.status) && <p className="notice">This run {statusLabel(run.status).toLowerCase()}. Retained samples are partial telemetry; a successful final result is unavailable.</p>}
     <Kpis snapshots={snapshots} result={result} records={records} />
-    <div className="chart-grid"><MetricChart snapshots={snapshots} kind="throughput" /><MetricChart snapshots={snapshots} kind="occupancy" /></div>
-    <div className="chart-grid"><MetricChart snapshots={snapshots} kind="waiting" /><AllocationEvents run={run} records={records} snapshots={snapshots} /></div>
+    <div className="chart-grid"><MetricChart snapshots={snapshots} kind="throughput" {...markerProps}/><MetricChart snapshots={snapshots} kind="occupancy" {...markerProps}/></div>
+    <div className="chart-grid"><MetricChart snapshots={snapshots} kind="waiting" />{adaptiveTimeline ? <AdaptiveTimeline run={run} events={events} selectedIndex={selectedResizeIndex} idPrefix={timelineId}/> : <AllocationEvents run={run} records={records} snapshots={snapshots} />}</div>
     <StreamTable run={run} snapshots={snapshots} result={result} />
   </div>;
 }

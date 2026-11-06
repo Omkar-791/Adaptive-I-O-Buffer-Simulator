@@ -5,7 +5,8 @@ const path = require('node:path');
 const { randomUUID } = require('node:crypto');
 const { spawn: nativeSpawn } = require('node:child_process');
 const { NdjsonParser } = require('./telemetry');
-const TERMINAL = new Set(['completed','failed','cancelled','timed_out']);
+const { TERMINAL, transition, publicStatus } = require('./run-lifecycle');
+const { createTermination } = require('./process-termination');
 class BridgeError extends Error {
   constructor(status, code, message) { super(message); this.status=status; this.code=code; }
 }
@@ -29,6 +30,9 @@ class RunManager {
     this.maxTelemetryBytes=limit(options.maxTelemetryBytes,1024*1024,64*1024*1024,'telemetry bytes');
     this.timeoutMs=limit(options.timeoutMs ?? options.maxDurationMs,30000,3600000,'timeout');
     this.killGraceMs=limit(options.killGraceMs,250,10000,'kill grace');
+    this.forceWaitMs=limit(options.forceWaitMs,1000,10000,'forced termination wait');
+    this.cleanupTimeoutMs=limit(options.cleanupTimeoutMs,1000,10000,'artifact cleanup timeout');
+    this.realSpawn=!options.spawn;
     this.shutdownTimeoutMs=limit(options.shutdownTimeoutMs,5000,30000,'shutdown timeout');
     this.maxOutputBytes=limit(options.maxOutputBytes,16*1024*1024,256*1024*1024,'output bytes');
     this.maxStderrBytes=limit(options.maxStderrBytes,8192,1024*1024,'stderr bytes');
@@ -42,7 +46,10 @@ class RunManager {
       const stat=await fs.stat(this.executablePath);
       if(stat.isFile()) {await fs.access(this.executablePath,fsConstants.X_OK);available=true;}
     } catch {}
-    return {status:this.closed?'stopping':'ok',native:{configured:Boolean(this.executablePath),available},activeRuns:this.active,concurrencyLimit:this.maxConcurrent};
+    // Finished lifecycle work may still have unconfirmed OS resources. Count that
+    // uncertainty once without retaining process handles or changing admission.
+    const unresolved=[...this.runs.values()].filter(run=>!run.active&&(run.terminationUnconfirmed||run.cleanupFailed)).length;
+    return {status:this.closed?'stopping':'ok',native:{configured:Boolean(this.executablePath),available},activeRuns:this.active+unresolved,concurrencyLimit:this.maxConcurrent};
   }
   _run(id) {
     const run=this.runs.get(id);
@@ -50,7 +57,7 @@ class RunManager {
     return run;
   }
   _summary(run) {
-    return {id:run.id,status:run.status,createdAt:run.createdAt,startedAt:run.startedAt,
+    return {id:run.id,status:publicStatus(run.status),createdAt:run.createdAt,startedAt:run.startedAt,
       endedAt:run.endedAt,progress:null,error:run.error ? {...run.error}:null,
       cancellationMode:'terminate',cancellationRequested:Boolean(run.requestedState==='cancelled'),
       configuration:clone({strategy:run.adaptive?'adaptive':'fixed',
@@ -64,7 +71,7 @@ class RunManager {
   }
   telemetry(id,{after=0,limit:count=this.telemetryLimit}={}) {
     const run=this._run(id);
-    if(!Number.isSafeInteger(after)||after<0||!Number.isSafeInteger(count)||count<1||count>10000)
+    if(!Number.isSafeInteger(after)||after<0||after>run.eventIndex||!Number.isSafeInteger(count)||count<1||count>10000)
       throw new BridgeError(400,'INVALID_CURSOR','Invalid telemetry cursor or limit.');
     const records=run.events.filter(event=>event.index>after).slice(0,count);
     const oldestCursor=run.events[0]?.index ?? run.eventIndex+1;
@@ -118,6 +125,14 @@ class RunManager {
         }
         if(total>run.budget) throw new Error('Resize budget exceeded');
         for(const stream of record.streams) run.capacities.set(stream.stream_id,stream.actual_capacity);
+      } else {
+        // Early native rejection may omit streams or report only a partial list.
+        // Every capacity that is reported must still describe this run's unchanged allocation.
+        for(const stream of record.streams) {
+          const capacity=run.capacities.get(stream.stream_id);
+          if(!run.expected.has(stream.stream_id)||stream.previous_capacity!==capacity||stream.actual_capacity!==capacity)
+            throw new Error('Unapplied resize acknowledgement mismatch');
+        }
       }
     } else {
       if(!run.finalSnapshot || !record.success || !sameIds(record.streams,run.expected) || record.global_buffer_budget!==run.budget)
@@ -146,48 +161,58 @@ class RunManager {
   async create(request) {
     if(this.closed) throw new BridgeError(503,'SERVER_STOPPING','Backend is stopping.');
     if(this.active>=this.maxConcurrent) throw new BridgeError(503,'CONCURRENCY_LIMIT','Concurrent run limit reached.');
+    const normalized=clone(request);
+    if(!normalized.config || !Array.isArray(normalized.config.streams) || normalized.config.streams.length===0)
+      throw new BridgeError(400,'INVALID_CONFIGURATION','Validated streams are required.');
     while(this.runs.size>=this.maxHistory) {
       const victim=[...this.runs.values()].find(run=>TERMINAL.has(run.status)&&!run.active);
       if(!victim) throw new BridgeError(503,'HISTORY_LIMIT','Run capacity reached.');
       this.runs.delete(victim.id);
     }
-    const normalized=clone(request);
-    if(!normalized.config || !Array.isArray(normalized.config.streams) || normalized.config.streams.length===0)
-      throw new BridgeError(400,'INVALID_CONFIGURATION','Validated streams are required.');
     const expected=new Map(normalized.config.streams.map(stream=>[stream.stream_id,stream]));
     const {streams:_streams,...configRoot}=normalized.config;
-    const run={id:randomUUID(),status:'starting',createdAt:now(),startedAt:null,endedAt:null,error:null,
+    const run={id:randomUUID(),status:'queued',createdAt:now(),startedAt:null,endedAt:null,error:null,
       request:normalized,configRoot,adaptive:normalized.adaptive,metricsIntervalMs:normalized.metricsIntervalMs,metricsWindowMs:normalized.metricsWindowMs,expected,capacities:new Map([...expected].map(([id,s])=>[id,s.buffer_capacity])),
       budget:normalized.config.global_buffer_budget,events:[],eventSizes:[],eventBytes:0,eventIndex:0,
-      outputBytes:0,stderr:Buffer.alloc(0),stderrTruncated:false,lastSequence:0,lastElapsed:0,lastCounts:new Map(),active:true};
+      outputBytes:0,stderr:Buffer.alloc(0),stderrTruncated:false,lastSequence:0,lastElapsed:0,lastCounts:new Map(),active:true,listeners:[]};
     run.done=new Promise(resolve=>{run.resolveDone=resolve;});
+    run.setupDone=new Promise(resolve=>{run.resolveSetup=resolve;});
     this.runs.set(run.id,run);this.active++;
     run.parser=new NdjsonParser({maxLineBytes:this.maxLineBytes,onRecord:record=>this._record(run,record)});
     run.timer=setTimeout(()=>this._stop(run,'timed_out','NATIVE_TIMEOUT','Native run exceeded the configured duration.'),this.timeoutMs);
     try {
       if(!this.executablePath) throw new Error('No executable configured');
       await fs.mkdir(this.tempRoot,{recursive:true});
+      if(run.finished || run.finalizing) return this._summary(run);
       run.directory=await fs.mkdtemp(path.join(this.tempRoot,'run-'));
-      if(this.closed || run.requestedState) {await this._finish(run,null,null);return this._summary(run);}
+      if(run.finished || run.finalizing) { await this._removeDirectory(run.directory); return this._summary(run); }
+      if(this.closed || run.requestedState) {this._settleSetup(run);await this._finish(run,null,null);return this._summary(run);}
       const input=path.join(run.directory,'config.json');
       await fs.writeFile(input,JSON.stringify(normalized.config),{encoding:'utf8',flag:'wx',mode:0o600});
-      if(this.closed || run.requestedState) {await this._finish(run,null,null);return this._summary(run);}
+      if(run.finished || run.finalizing) { await this._removeDirectory(run.directory); return this._summary(run); }
+      if(this.closed || run.requestedState) {this._settleSetup(run);await this._finish(run,null,null);return this._summary(run);}
       const args=['--config',input,'--telemetry','--metrics-interval-ms',String(normalized.metricsIntervalMs),'--metrics-window-ms',String(normalized.metricsWindowMs)];
       if(normalized.adaptive) args.push('--adaptive');
       const env={};
       for(const key of ['PATH','Path','SystemRoot','SYSTEMROOT','WINDIR','TEMP','TMP','LD_LIBRARY_PATH','DYLD_LIBRARY_PATH'])
         if(typeof process.env[key]==='string') env[key]=process.env[key];
-      const child=this.spawn(this.executablePath,args,{cwd:this.cwd,env,shell:false,windowsHide:true,stdio:['ignore','pipe','pipe']});
+      const child=this.spawn(this.executablePath,args,{cwd:this.cwd,env,shell:false,windowsHide:true,stdio:['ignore','pipe','pipe'],...(this.realSpawn && process.platform!=='win32' ? {detached:true} : {})});
       run.child=child;
-      child.once('spawn',()=>{if(!run.finished){run.status='running';run.startedAt=now();if(run.requestedState)this._terminate(run);}});
-      child.stdout.on('data',chunk=>{
-        if(run.finished||run.requestedState) return;
+      run.termination=createTermination(child,{graceMs:this.killGraceMs,forceWaitMs:this.forceWaitMs,tree:this.realSpawn});
+      this._listen(run,child,'spawn',()=>{
+        if(run.finished || run.finalizing) return;
+        transition(run,'running');run.startedAt=now();
+        if(run.requestedState==='cancelled')transition(run,'cancelling');
+        if(run.requestedState)this._terminate(run);
+      },true);
+      this._listen(run,child.stdout,'data',chunk=>{
+        if(run.finished||run.finalizing||run.requestedState) return;
         run.outputBytes+=Buffer.byteLength(chunk);
         if(run.outputBytes>this.maxOutputBytes) {this._stop(run,'failed','NATIVE_OUTPUT_LIMIT','Native output exceeded the configured limit.');return;}
         try {run.parser.write(chunk);} catch {this._stop(run,'failed','NATIVE_PROTOCOL_ERROR','Native output was malformed or inconsistent.');}
       });
-      child.stderr.on('data',chunk=>{
-        if(run.finished)return;
+      this._listen(run,child.stderr,'data',chunk=>{
+        if(run.finished||run.finalizing)return;
         const bytes=Buffer.isBuffer(chunk)?chunk:Buffer.from(chunk);
         run.outputBytes+=bytes.length;
         if(run.outputBytes>this.maxOutputBytes) {this._stop(run,'failed','NATIVE_OUTPUT_LIMIT','Native output exceeded the configured limit.');return;}
@@ -195,45 +220,98 @@ class RunManager {
         if(bytes.length>remaining)run.stderrTruncated=true;
         if(remaining>0)run.stderr=Buffer.concat([run.stderr,bytes.subarray(0,remaining)]);
       });
-      for(const stream of [child.stdout,child.stderr]) stream.on('error',()=>{
+      for(const stream of [child.stdout,child.stderr]) this._listen(run,stream,'error',()=>{
         this._stop(run,'failed','NATIVE_IO_FAILED','Native process output could not be read.');
       });
-      child.on('error',()=>{
+      this._listen(run,child,'error',()=>{
         if(run.finished||run.finalizing)return;
-        if(!run.failure)run.failure={code:'NATIVE_LAUNCH_FAILED',message:'Native process could not be started or controlled.'};
-        if(!child.pid) void this._finish(run,null,null);
-        else this._stop(run,'failed',run.failure.code,run.failure.message);
+        if(!child.pid) {
+          run.failure={code:'NATIVE_LAUNCH_FAILED',message:'Native process could not be started.'};
+          run.requestedState='failed';void this._finish(run,null,null);
+        } else this._stop(run,'failed','NATIVE_LAUNCH_FAILED','Native process could not be started or controlled.');
       });
-      child.once('close',(code,signal)=>{void this._finish(run,code,signal);});
+      this._listen(run,child,'exit',(code,signal)=>{
+        run.exitObserved={code,signal};clearTimeout(run.timer);run.timer=null;
+        // Descendants can inherit output pipes and delay close after the direct child exits.
+        // Keep the drain wait bounded, without treating an exit alone as successful completion.
+        if(!run.requestedState)run.closeTimer=setTimeout(()=>this._stop(run,'failed','NATIVE_CLOSE_UNCONFIRMED','Native output streams did not close within the configured bounds.'),this.forceWaitMs);
+      },true);
+      this._listen(run,child,'close',(code,signal)=>{
+        run.processClosed=true;run.exitObserved={code,signal};
+        if(!run.requestedState)void this._finish(run,code,signal);
+        // A requested stop finishes through its single termination operation.
+      },true);
     } catch {
-      run.failure={code:'NATIVE_LAUNCH_FAILED',message:'Native process could not be started.'};
-      await this._finish(run,null,null);
+      if(!run.finished&&!run.finalizing) {
+        run.failure={code:'NATIVE_LAUNCH_FAILED',message:'Native process could not be started.'};
+        run.requestedState='failed';this._settleSetup(run);await this._finish(run,null,null);
+      }
+    } finally {
+      this._settleSetup(run);
     }
     return this._summary(run);
   }
+  _settleSetup(run) {
+    if(run.setupSettled)return;
+    run.setupSettled=true;run.resolveSetup();run.resolveSetup=null;
+  }
+  async _waitForSetup(run) {
+    if(run.setupSettled)return;
+    let deadline;
+    try {
+      await Promise.race([run.setupDone,new Promise((_,reject)=>{
+        deadline=setTimeout(()=>reject(new Error('Native artifact setup did not settle')),this.cleanupTimeoutMs);
+      })]);
+    } finally {clearTimeout(deadline);}
+  }
+  _listen(run,emitter,event,listener,once=false) {
+    if(once)emitter.once(event,listener);else emitter.on(event,listener);
+    run.listeners.push(()=>emitter.removeListener(event,listener));
+  }
   _terminate(run) {
-    if(!run.child||run.finished||run.terminationStarted)return;
+    if(!run.child||run.finished||run.finalizing||run.terminationPromise)return;
     run.terminationStarted=true;
-    try {run.child.kill('SIGTERM');} catch {}
-    if(!run.killTimer) run.killTimer=setTimeout(()=>{if(!run.finished)try{run.child.kill('SIGKILL');}catch{}},this.killGraceMs);
+    run.terminationPromise=run.termination.stop().then(outcome=>{
+      run.terminationOutcome=outcome;
+      return this._finish(run,outcome.code,outcome.signal,outcome.confirmed);
+    },()=>this._finish(run,null,null,false));
   }
   _stop(run,state,code,message) {
-    if(run.finished||run.finalizing||TERMINAL.has(run.status)||run.requestedState)return;
+    if(run.finished||run.finalizing||(run.exitObserved&&state!=='failed')||TERMINAL.has(run.status)||run.requestedState)return;
+    // The first stop request owns the outcome. Later timeout/cancel/shutdown requests share it.
     run.requestedState=state;run.failure={code,message};
-    this._terminate(run);
+    clearTimeout(run.timer);run.timer=null;
+    if(state==='cancelled'&&run.status==='running')transition(run,'cancelling');
+    if(run.child)this._terminate(run);
+    else void this._finish(run,null,null);
   }
   cancel(id) {
     const run=this._run(id);
-    if(TERMINAL.has(run.status)||run.finalizing) throw new BridgeError(409,'RUN_TERMINAL','Run is terminal or finishing.');
+    if(TERMINAL.has(run.status)||run.finalizing||run.exitObserved) throw new BridgeError(409,'RUN_TERMINAL','Run is terminal or finishing.');
     this._stop(run,'cancelled','RUN_CANCELLED','Run terminated by request; shutdown is not graceful.');
     return this._summary(run);
   }
-  async _finish(run,code,signal) {
+  async _removeDirectory(directory) {
+    const resolved=path.resolve(directory), root=path.resolve(this.tempRoot);
+    if(path.dirname(resolved)!==root||!path.basename(resolved).startsWith('run-'))throw new Error('Unsafe cleanup path');
+    let deadline;
+    try {
+      await Promise.race([fs.rm(resolved,{recursive:true,force:true,maxRetries:3,retryDelay:50}),new Promise((_,reject)=>{
+        deadline=setTimeout(()=>reject(new Error('Artifact cleanup deadline exceeded')),this.cleanupTimeoutMs);
+      })]);
+    } finally {clearTimeout(deadline);}
+  }
+  async _finish(run,code,signal,confirmed=true) {
     if(run.finished||run.finalizing)return run.done;
     run.finalizing=true;
-    clearTimeout(run.timer);clearTimeout(run.killTimer);
+    clearTimeout(run.timer);run.timer=null;
+    clearTimeout(run.closeTimer);run.closeTimer=null;
+    run.termination?.dispose();run.termination=null;
     let status=run.requestedState || 'completed';
-    if(!run.requestedState) {
+    if(!confirmed) {
+      status='failed';run.terminationUnconfirmed=true;this.unconfirmedTermination=true;this.closed=true;
+      run.failure={code:'NATIVE_TERMINATION_UNCONFIRMED',message:'Native termination could not be confirmed within its configured bounds. The backend will admit no further runs.'};
+    } else if(!run.requestedState) {
       try {
         run.parser.end();
         if(code!==0||signal||run.failure||!run.completion||!run.finalSnapshot) throw new Error('Native execution did not complete');
@@ -242,31 +320,56 @@ class RunManager {
         run.failure=run.failure || {code:code!==0?'NATIVE_EXIT_FAILED':'NATIVE_PROTOCOL_ERROR',message:'Native process did not produce a valid successful result.'};
       }
     }
+    try {await this._waitForSetup(run);} catch {
+      status='failed';run.cleanupFailed=true;this.closed=true;
+      run.failure={code:'ARTIFACT_SETUP_UNCONFIRMED',message:'Native artifact setup could not be confirmed within the configured bounds. The backend will admit no further runs.'};
+    }
+    if(run.status==='queued' && status==='timed_out') status='failed';
+    // A queued child may close without its spawn event; success is never inferred in that case.
+    if(run.status==='queued' && status==='completed') {
+      status='failed';run.failure={code:'NATIVE_EXIT_FAILED',message:'Native process exited before startup was established.'};
+    }
     if(run.directory) {
-      const resolved=path.resolve(run.directory), root=path.resolve(this.tempRoot);
-      try {
-        if(path.dirname(resolved)!==root||!path.basename(resolved).startsWith('run-'))throw new Error('Unsafe cleanup path');
-        await fs.rm(resolved,{recursive:true,force:true,maxRetries:3,retryDelay:50});
-      } catch {
-        status='failed';run.failure={code:'ARTIFACT_CLEANUP_FAILED',message:'Native artifacts could not be cleaned up.'};
+      try {await this._removeDirectory(run.directory);} catch {
+        status='failed';run.cleanupFailed=true;this.closed=true;
+        if(confirmed)run.failure={code:'ARTIFACT_CLEANUP_FAILED',message:'Native artifacts could not be cleaned up within the configured bounds.'};
       }
     }
-    run.status=status;run.error=status==='completed'?null:run.failure;
+    for(const remove of run.listeners)remove();run.listeners=[];
+    if(run.child) {
+      // No manager callbacks retain an unconfirmed child. Its IO handles must not hold shutdown open.
+      run.child.stdout?.destroy();run.child.stderr?.destroy();
+      if(!confirmed) {run.child.on('error',ignoreDetachedError);run.child.unref?.();}
+    }
+    if(!transition(run,status)) throw new Error(`Forbidden lifecycle transition: ${run.status} -> ${status}`);
+    run.error=status==='completed'?null:run.failure;
     if(status==='completed')run.result=run.completion;
-    run.endedAt=now();run.active=false;run.finished=true;this.active--;run.resolveDone();
-    // Native diagnostic text is deliberately never returned through the public API.
-    run.stderr=Buffer.alloc(0);run.child=null;run.request=null;
+    run.endedAt=now();run.active=false;run.finished=true;this.active--;
+    // Keep only bounded history/telemetry/effective configuration; release execution resources.
+    run.stderr=Buffer.alloc(0);run.child=null;run.request=null;run.parser=null;
+    run.completion=null;run.finalSnapshot=null;run.lastCounts.clear();run.resolveDone();run.resolveDone=null;
   }
-  async close() {
+  close() {
+    if(this.closePromise)return this.closePromise;
     this.closed=true;
     const active=[...this.runs.values()].filter(run=>run.active);
     for(const run of active)this._stop(run,'cancelled','SERVER_SHUTDOWN','Run terminated during backend shutdown; shutdown is not graceful.');
-    let deadline;
-    try {
-      await Promise.race([Promise.all(active.map(run=>run.done)),new Promise((_,reject)=>{
-        deadline=setTimeout(()=>reject(new BridgeError(503,'SHUTDOWN_INCOMPLETE','Native termination or artifact cleanup could not be confirmed.')),this.shutdownTimeoutMs);
-      })]);
-    } finally {clearTimeout(deadline);} 
+    this.closePromise=(async()=>{
+      let deadline;
+      try {
+        await Promise.race([Promise.all(active.map(run=>run.done)),new Promise(resolve=>{
+          deadline=setTimeout(()=>{
+            // Direct-child close is insufficient when a tree request is still unresolved.
+            void Promise.all(active.filter(run=>!run.finished).map(run=>this._finish(run,null,null,!run.child||run.terminationOutcome?.confirmed===true))).then(resolve);
+          },this.shutdownTimeoutMs);
+        })]);
+        if(this.unconfirmedTermination||[...this.runs.values()].some(run=>run.cleanupFailed))
+          throw new BridgeError(503,'SHUTDOWN_INCOMPLETE','Native termination or artifact cleanup could not be confirmed.');
+      } finally {clearTimeout(deadline);}
+    })();
+    return this.closePromise;
   }
 }
+// This handler retains neither the manager nor the child and only protects detached late OS errors.
+function ignoreDetachedError() {}
 module.exports={RunManager,BridgeError};
